@@ -6,17 +6,18 @@ import Prelude
 import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe)
+import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import RussianClock.Util.RussianTime (timeString)
 import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
 import Web.Speech.TTS.Voice as V
-import Effect.Aff.Class (class MonadAff)
 
 unknown :: String
 unknown = "unknown"
@@ -32,6 +33,7 @@ type State
     , voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
     , maybeError :: Maybe String
+    , maybeStringTimeToRead :: Maybe String
     }
 
 data Action
@@ -48,6 +50,7 @@ component =
           , voices: []
           , maybeVoice: Nothing
           , maybeError: Nothing
+          , maybeStringTimeToRead: Nothing
           }
     , render
     , eval:
@@ -108,5 +111,11 @@ handleAction = case _ of
       minute = round $ rm * 60.0
 
       time = { hour, minute }
-    H.modify_ \st -> st { maybeTime = Just time }
+
+      russianTime = timeString time
+    H.modify_ \st ->
+      st
+        { maybeTime = Just time
+        , maybeStringTimeToRead = Just russianTime
+        }
   SelectVoice i -> H.modify_ \st -> st { maybeVoice = st.voices !! i }
