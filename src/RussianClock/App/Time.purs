@@ -18,7 +18,10 @@ unknown :: String
 unknown = "unknown"
 
 type State
-  = { maybeTime :: Maybe TimeStruct }
+  = { maybeTime :: Maybe TimeStruct
+    , voices :: Array V.Voice
+    , maybeVoice :: Maybe V.Voice
+    }
 
 data Action
   = Initialize
@@ -27,7 +30,7 @@ data Action
 component :: forall q i o m. MonadEffect m => H.Component q i o m
 component =
   H.mkComponent
-    { initialState: \_ -> { maybeTime: Nothing }
+    { initialState: \_ -> { maybeTime: Nothing, voices: [], maybeVoice: Nothing }
     , render
     , eval:
         H.mkEval
