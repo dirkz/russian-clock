@@ -109,6 +109,7 @@ handleAction = case _ of
             H.liftAff
             $ TTS.voices synth
         H.modify_ \st -> st { voices = voices, maybeVoice = voices !! 0 }
+        handleAction Read
   Random -> do
     eraseError
     rh <- H.liftEffect random
@@ -127,7 +128,9 @@ handleAction = case _ of
         , maybeStringTimeToRead = Just russianTime
         }
     handleAction Read
-  SelectVoice i -> H.modify_ \st -> st { maybeVoice = st.voices !! i }
+  SelectVoice i -> do
+    H.modify_ \st -> st { maybeVoice = st.voices !! i }
+    handleAction Read
   Read -> do
     eraseError
     st <- H.get
