@@ -1,4 +1,4 @@
-module App.Button where
+module RussianClock.App.Button where
 
 import Prelude
 import Halogen as H
