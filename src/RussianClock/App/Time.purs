@@ -3,14 +3,17 @@ module RussianClock.App.Time
   ) where
 
 import Prelude
-import RussianClock.Util.TimeStruct (TimeStruct)
-import Data.Maybe (Maybe(..))
+import Data.Int (round)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
-import Data.Int (round)
+import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
+
+unknown :: String
+unknown = "unknown"
 
 type State
   = { maybeTime :: Maybe TimeStruct }
@@ -35,6 +38,7 @@ render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   HH.article_
     [ HH.h1_ [ HH.text "Russian Time" ]
+    , HH.p_ [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
     ]
 
 handleAction :: forall cs o m. MonadEffect m => Action → H.HalogenM State Action cs o m Unit
