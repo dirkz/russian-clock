@@ -3,7 +3,7 @@
     grid-template-areas:
         ". title ."
         ". voice-name voice-selection"
-        "clock clock clock"
+        ". clock ."
         ". time ."
         ". random-time .";
     grid-template-columns: 1fr 1fr 1fr;
