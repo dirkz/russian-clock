@@ -1,34 +1,51 @@
-module RussianClock.App.Time where
+module RussianClock.App.Time
+  ( component
+  ) where
 
 import Prelude
+import RussianClock.Util.TimeStruct (TimeStruct)
+import Data.Maybe (Maybe(..))
+import Effect.Class (class MonadEffect)
+import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
+import Data.Int (round)
 
 type State
-  = { count :: Int }
+  = { maybeTime :: Maybe TimeStruct }
 
 data Action
-  = Increment
+  = Initialize
 
-component :: forall q i o m. H.Component q i o m
+component :: forall q i o m. MonadEffect m => H.Component q i o m
 component =
   H.mkComponent
-    { initialState: \_ -> { count: 0 }
+    { initialState: \_ -> { maybeTime: Nothing }
     , render
-    , eval: H.mkEval H.defaultEval { handleAction = handleAction }
+    , eval:
+        H.mkEval
+          H.defaultEval
+            { handleAction = handleAction
+            , initialize = Just Initialize
+            }
     }
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
-render state =
-  HH.div_
-    [ HH.p_
-        [ HH.text $ "You clicked " <> show state.count <> " times" ]
-    , HH.button
-        [ HE.onClick \_ -> Increment ]
-        [ HH.text "Click me" ]
+render st =
+  HH.article_
+    [ HH.h1_ [ HH.text "Russian Time" ]
     ]
 
-handleAction :: forall cs o m. Action → H.HalogenM State Action cs o m Unit
+handleAction :: forall cs o m. MonadEffect m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
-  Increment -> H.modify_ \st -> st { count = st.count + 1 }
+  Initialize -> do
+    rh <- H.liftEffect random
+    rm <- H.liftEffect random
+    let
+      hour = round $ rh * 12.0
+
+      minute = round $ rm * 60.0
+
+      time = { hour, minute }
+    H.modify_ \st -> st { maybeTime = Just time }
