@@ -24,6 +24,9 @@ unknown = "unknown"
 language ∷ String
 language = "ru-RU"
 
+none :: String
+none = "none"
+
 type State
   = { maybeTime :: Maybe TimeStruct
     , voices :: Array V.Voice
@@ -34,6 +37,7 @@ type State
 data Action
   = Initialize
   | Random
+  | SelectVoice Int
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -58,6 +62,11 @@ render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   HH.article_
     [ HH.h1_ [ HH.text "Russian Time" ]
+    , HH.p_
+        [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
+            (map voiceOption st.voices)
+        , HH.text $ fromMaybe none $ V.name <$> st.maybeVoice
+        ]
     , HH.p_ [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
     , case st.maybeError of
         Nothing -> HH.text ""
@@ -68,6 +77,10 @@ render st =
             [ HH.text "Random Time" ]
         ]
     ]
+  where
+  voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"
+
+  voiceOption voice = HH.option_ [ HH.text (voiceName voice) ]
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
@@ -93,3 +106,4 @@ handleAction = case _ of
 
       time = { hour, minute }
     H.modify_ \st -> st { maybeTime = Just time }
+  SelectVoice i -> H.modify_ \st -> st { maybeVoice = st.voices !! i }
