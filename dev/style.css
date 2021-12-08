@@ -5,6 +5,7 @@
         ". voice-name voice-selection"
         ". clock ."
         ". time ."
+        ". error ."
         ". random-time .";
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1em;
@@ -25,6 +26,11 @@
 
 .time {
     grid-area: time;
+}
+
+.error {
+    grid-area: error;
+    color: red;
 }
 
 .random-time {
