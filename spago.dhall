@@ -9,6 +9,7 @@
   , "psci-support"
   , "random"
   , "strings"
+  , "web-speech"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
