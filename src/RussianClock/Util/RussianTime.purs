@@ -9,39 +9,31 @@ import Data.Int (rem)
 timeString :: TimeStruct -> String
 timeString time
   | time.minute == 30 = "полови́на" <> " " <> (genitiveOrdinalHour $ plusOneHour time.hour)
-
-timeString time
   | time.hour == 0 && time.minute == 0 = nominativeHour 12 <> " " <> "часо́в"
-
-timeString time
   | time.hour == 1 && time.minute == 0 = "час"
-
-timeString time
   | time.minute == 0 = (nominativeHour time.hour) <> " " <> (hourAfterNumber time.hour)
-
-timeString time =
-  if time.minute < 30 then
+  | time.minute < 30 =
     (nominativeMinute time.minute)
       <> " "
       <> minuteAfterNumber time.minute
       <> " "
       <> (genitiveOrdinalHour $ plusOneHour time.hour)
-  else
+  | otherwise =
     "без"
       <> " "
       <> genitiveMinute (60 - time.minute)
       <> theMinute
       <> " "
       <> (genitiveOrdinalHour $ plusOneHour time.hour)
-  where
-  theMinute =
-    let
-      correctedMinute = if time.minute < 30 then time.minute else 60 - time.minute
-    in
-      if correctedMinute `rem` 5 == 0 then
-        ""
-      else
-        " " <> minuteAfterNumber correctedMinute
+    where
+    theMinute =
+      let
+        correctedMinute = if time.minute < 30 then time.minute else 60 - time.minute
+      in
+        if correctedMinute `rem` 5 == 0 then
+          ""
+        else
+          " " <> minuteAfterNumber correctedMinute
 
 plusOneHour :: Int -> Int
 plusOneHour h = (h + 1) `mod` 12
