@@ -1,6 +1,8 @@
 { name = "halogen-project"
 , dependencies =
-  [ "console"
+  [ "aff"
+  , "arrays"
+  , "console"
   , "effect"
   , "halogen"
   , "integers"
@@ -9,6 +11,7 @@
   , "psci-support"
   , "random"
   , "strings"
+  , "web-html"
   , "web-speech"
   ]
 , packages = ./packages.dhall
