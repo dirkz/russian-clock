@@ -20,6 +20,7 @@ type State
 
 data Action
   = Initialize
+  | Random
 
 component :: forall q i o m. MonadEffect m => H.Component q i o m
 component =
@@ -39,11 +40,17 @@ render st =
   HH.article_
     [ HH.h1_ [ HH.text "Russian Time" ]
     , HH.p_ [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
+    , HH.p_
+        [ HH.button
+            [ HE.onClick \_ -> Random ]
+            [ HH.text "Random Time" ]
+        ]
     ]
 
 handleAction :: forall cs o m. MonadEffect m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
-  Initialize -> do
+  Initialize -> handleAction Random
+  Random -> do
     rh <- H.liftEffect random
     rm <- H.liftEffect random
     let
