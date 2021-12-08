@@ -3,7 +3,6 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
-
 import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -111,6 +110,7 @@ handleAction = case _ of
             $ TTS.voices synth
         H.modify_ \st -> st { voices = voices, maybeVoice = voices !! 0 }
   Random -> do
+    eraseError
     rh <- H.liftEffect random
     rm <- H.liftEffect random
     let
@@ -129,6 +129,7 @@ handleAction = case _ of
     handleAction Read
   SelectVoice i -> H.modify_ \st -> st { maybeVoice = st.voices !! i }
   Read -> do
+    eraseError
     st <- H.get
     case st.maybeStringTimeToRead of
       Nothing -> signalError "Nothing to read"
@@ -144,5 +145,7 @@ handleAction = case _ of
               Nothing -> signalError "No TTS support while trying to read"
               Just tts -> H.liftEffect $ TTS.speak tts utt
             pure unit
-    where
-    signalError string = H.modify_ \st -> st { maybeError = Just string }
+  where
+  signalError string = H.modify_ \st -> st { maybeError = Just string }
+
+  eraseError = H.modify_ \st -> st { maybeError = Nothing }
