@@ -4,6 +4,7 @@
   , "effect"
   , "halogen"
   , "integers"
+  , "maybe"
   , "prelude"
   , "psci-support"
   , "random"
