@@ -30,3 +30,8 @@
 .random-time {
     grid-area: random-time;
 }
+
+.clock {
+    grid-area: clock;
+    min-height: 20em;
+}
