@@ -17,6 +17,9 @@ import Web.Speech.TTS.Voice as V
 unknown :: String
 unknown = "unknown"
 
+language ∷ String
+language = "ru-RU"
+
 type State
   = { maybeTime :: Maybe TimeStruct
     , voices :: Array V.Voice
