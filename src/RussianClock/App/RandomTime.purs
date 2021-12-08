@@ -1,4 +1,4 @@
-module RussianClock.App.Time
+module RussianClock.App.RandomTime
   ( component
   ) where
 

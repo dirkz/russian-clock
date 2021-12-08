@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 
-import RussianClock.App.Time as Time
+import RussianClock.App.RandomTime as RT
 import Effect (Effect)
 import Halogen.Aff as HA
 import Halogen.VDom.Driver (runUI)
@@ -10,4 +10,4 @@ import Halogen.VDom.Driver (runUI)
 main :: Effect Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
-  runUI Time.component unit body
+  runUI RT.component unit body
