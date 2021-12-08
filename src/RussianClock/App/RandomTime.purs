@@ -60,18 +60,21 @@ component =
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
-  HH.article_
-    [ HH.h1_ [ HH.text "Russian Time" ]
-    , HH.p_
+  HH.article [ HP.classes [ HH.ClassName "container" ] ]
+    [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "Russian Time" ]
+    , HH.p [ HP.classes [ HH.ClassName "voice-name" ] ]
+        [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
+    , HH.p [ HP.classes [ HH.ClassName "voice-selection" ] ]
         [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
             (map voiceOption st.voices)
-        , HH.text $ fromMaybe none $ V.name <$> st.maybeVoice
         ]
-    , HH.p_ [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
+    , HH.p [ HP.classes [ HH.ClassName "clock" ] ] []
+    , HH.p [ HP.classes [ HH.ClassName "time" ] ]
+        [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
-    , HH.p_
+    , HH.p [ HP.classes [ HH.ClassName "random-time" ] ]
         [ HH.button
             [ HE.onClick \_ -> Random ]
             [ HH.text "Random Time" ]

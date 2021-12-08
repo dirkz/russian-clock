@@ -1,0 +1,28 @@
+.container {
+    display: grid;
+    grid-template-areas:
+        ". title ."
+        ". voice-name voice-selection"
+        "clock clock clock"
+        ". time ."
+        ". random-time .";
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1em;
+    margin: 4em;
+}
+
+.title {
+    grid-area: title;
+}
+
+.voice-selection {
+    grid-area: voice-selection;
+}
+
+.time {
+    grid-area: time;
+}
+
+.random-time {
+    grid-area: random-time;
+}
