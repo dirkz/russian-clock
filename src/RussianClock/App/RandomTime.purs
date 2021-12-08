@@ -34,7 +34,6 @@ type State
     , voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
     , maybeError :: Maybe String
-    , maybeStringTimeToRead :: Maybe String
     }
 
 data Action
@@ -52,7 +51,6 @@ component =
           , voices: []
           , maybeVoice: Nothing
           , maybeError: Nothing
-          , maybeStringTimeToRead: Nothing
           }
     , render
     , eval:
@@ -120,12 +118,9 @@ handleAction = case _ of
       minute = round $ rm * 60.0
 
       time = { hour, minute }
-
-      russianTime = timeString time
     H.modify_ \st ->
       st
         { maybeTime = Just time
-        , maybeStringTimeToRead = Just russianTime
         }
     handleAction Read
   SelectVoice i -> do
@@ -134,7 +129,7 @@ handleAction = case _ of
   Read -> do
     eraseError
     st <- H.get
-    case st.maybeStringTimeToRead of
+    case timeString <$> st.maybeTime of
       Nothing -> signalError "Nothing to read"
       Just stringToRead -> do
         utt <- H.liftEffect $ U.create stringToRead
