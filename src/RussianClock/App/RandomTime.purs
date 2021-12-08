@@ -17,6 +17,7 @@ import RussianClock.Util.RussianTime (timeString)
 import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
+import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
 unknown :: String
@@ -40,6 +41,7 @@ data Action
   = Initialize
   | Random
   | SelectVoice Int
+  | Read
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -95,7 +97,12 @@ handleAction = case _ of
     w <- H.liftEffect window
     maybeSynth <- H.liftEffect $ TTS.tts w
     case maybeSynth of
-      Nothing -> H.modify_ \st -> st { maybeError = Just "No TTS support" }
+      Nothing ->
+        H.modify_ \st ->
+          st
+            { maybeError =
+              Just "No TTS support while trying to get the voices"
+            }
       Just synth -> do
         voices <-
           map (map (filter (\v -> V.lang v == language)))
@@ -118,4 +125,19 @@ handleAction = case _ of
         { maybeTime = Just time
         , maybeStringTimeToRead = Just russianTime
         }
+    handleAction Read
   SelectVoice i -> H.modify_ \st -> st { maybeVoice = st.voices !! i }
+  Read -> do
+    st <- H.get
+    case st.maybeStringTimeToRead of
+      Nothing -> signalError "Nothing to read"
+      Just stringToRead -> do
+        utt <- H.liftEffect $ U.create stringToRead
+        w <- H.liftEffect window
+        maybeTts <- H.liftEffect $ TTS.tts w
+        case maybeTts of
+          Nothing -> signalError "No TTS support while trying to read"
+          Just tts -> H.liftEffect $ TTS.speak tts utt
+        pure unit
+    where
+    signalError string = H.modify_ \st -> st { maybeError = Just string }
