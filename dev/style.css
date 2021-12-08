@@ -19,6 +19,10 @@
     grid-area: voice-selection;
 }
 
+.voice-name {
+    grid-area: voice-name;
+}
+
 .time {
     grid-area: time;
 }
