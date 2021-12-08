@@ -11,6 +11,8 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
+import Web.Speech.TTS as TTS
+import Web.Speech.TTS.Voice as V
 
 unknown :: String
 unknown = "unknown"
