@@ -5,7 +5,7 @@ module RussianClock.App.RandomTime
 import Prelude
 import Data.Array (filter, (!!))
 import Data.Int (round)
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
@@ -81,12 +81,20 @@ render st =
         [ HH.button
             [ HE.onClick \_ -> Random ]
             [ HH.text "Random Time" ]
+        , case canRead of
+            false -> HH.text ""
+            true ->
+              HH.button
+                [ HE.onClick \_ -> Read ]
+                [ HH.text "Read" ]
         ]
     ]
   where
   voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"
 
   voiceOption voice = HH.option_ [ HH.text (voiceName voice) ]
+
+  canRead = isJust st.maybeVoice && isJust st.maybeTime
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
