@@ -165,11 +165,10 @@ handleAction = case _ of
     case timeString <$> st.maybeTime of
       Nothing -> signalError "Nothing to read"
       Just stringToRead -> do
-        utt <- H.liftEffect $ U.create stringToRead
         case st.maybeVoice of
           Nothing -> signalError "Have no voice to read"
           Just voice -> do
-            H.liftEffect $ U.setVoice utt voice
+            utt <- H.liftEffect $ U.createWithVoiceAndPitch voice st.pitchRateVolume stringToRead
             w <- H.liftEffect window
             maybeTts <- H.liftEffect $ TTS.tts w
             case maybeTts of
