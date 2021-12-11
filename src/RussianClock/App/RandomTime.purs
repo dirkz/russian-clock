@@ -3,7 +3,6 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
-
 import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
