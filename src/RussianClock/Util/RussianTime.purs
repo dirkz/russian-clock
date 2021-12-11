@@ -24,7 +24,7 @@ timeString time
       <> genitiveMinute (60 - time.minute)
       <> theMinute
       <> " "
-      <> (genitiveOrdinalHour $ plusOneHour time.hour)
+      <> (nominativeHour $ plusOneHour time.hour)
     where
     theMinute =
       let
