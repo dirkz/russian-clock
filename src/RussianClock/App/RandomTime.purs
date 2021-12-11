@@ -3,6 +3,7 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
+
 import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
@@ -17,6 +18,7 @@ import RussianClock.Util.RussianTime (timeString)
 import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
+import Web.Speech.TTS.Utterance (PitchRateVolume, defaultPitchRateVolume)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
@@ -34,6 +36,7 @@ type State
     , voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
     , maybeError :: Maybe String
+    , pitchRateVolume :: PitchRateVolume
     }
 
 data Action
@@ -51,6 +54,7 @@ component =
           , voices: []
           , maybeVoice: Nothing
           , maybeError: Nothing
+          , pitchRateVolume: defaultPitchRateVolume
           }
     , render
     , eval:
