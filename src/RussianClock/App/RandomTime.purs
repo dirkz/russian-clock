@@ -78,7 +78,7 @@ render st =
     , HH.div [ HP.classes [ HH.ClassName "voice-control" ] ]
         [ HH.p_ [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
         , HH.p_ []
-        , HH.p [ HP.classes [ HH.ClassName "voice-selection" ] ]
+        , HH.p_
             [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
                 (map voiceOption st.voices)
             ]
