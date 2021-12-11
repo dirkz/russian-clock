@@ -1,8 +1,10 @@
+/* General layout */
+
 .container {
     display: grid;
     grid-template-areas:
         ". title ."
-        ". voice-name voice-selection"
+        "voice-control voice-control voice-control"
         ". clock pitch"
         ". time ."
         ". error ."
@@ -16,12 +18,8 @@
     grid-area: title;
 }
 
-.voice-selection {
-    grid-area: voice-selection;
-}
-
-.voice-name {
-    grid-area: voice-name;
+.voice-control {
+    grid-area: voice-control;
 }
 
 .time {
@@ -44,4 +42,12 @@
 
 .pitch {
     grid-area: pitch;
+}
+
+/* Pitch Volume Rate controls */
+
+.voice-control {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 20px;
 }

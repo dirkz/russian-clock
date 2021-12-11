@@ -75,24 +75,26 @@ render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   HH.article [ HP.classes [ HH.ClassName "container" ] ]
     [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "Russian Time" ]
-    , HH.p [ HP.classes [ HH.ClassName "voice-name" ] ]
-        [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
-    , HH.p [ HP.classes [ HH.ClassName "voice-selection" ] ]
-        [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
-            (map voiceOption st.voices)
-        ]
-    , HH.p [ HP.classes [ HH.ClassName "pitch" ] ]
-        [ HH.text "Pitch"
-        , HH.input
-            [ HP.type_ InputRange
-            , HP.min U.pitchMin
-            , HP.max U.pitchMax
-            , HP.step $ Step 0.1
-            , HP.value (show st.pitchRateVolume.pitch)
-            , HE.onValueInput PitchInput
-            , HE.onValueChange PitchChange
+    , HH.div [ HP.classes [ HH.ClassName "voice-control" ] ]
+        [ HH.p_ [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
+        , HH.p_ []
+        , HH.p [ HP.classes [ HH.ClassName "voice-selection" ] ]
+            [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
+                (map voiceOption st.voices)
             ]
-        , HH.text $ show st.pitchRateVolume.pitch
+        , HH.p_ [ HH.text "Pitch" ]
+        , HH.p_
+            [ HH.input
+                [ HP.type_ InputRange
+                , HP.min U.pitchMin
+                , HP.max U.pitchMax
+                , HP.step $ Step 0.1
+                , HP.value (show st.pitchRateVolume.pitch)
+                , HE.onValueInput PitchInput
+                , HE.onValueChange PitchChange
+                ]
+            ]
+        , HH.p_ [ HH.text $ show st.pitchRateVolume.pitch ]
         ]
     , HH.p [ HP.classes [ HH.ClassName "clock" ] ] []
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
