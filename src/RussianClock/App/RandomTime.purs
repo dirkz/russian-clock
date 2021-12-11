@@ -46,7 +46,10 @@ data Action
   | Random
   | SelectVoice Int
   | Read
-  | PitchChanged String
+  --| All changes on-the-fly
+  | PitchInput String
+  --| "Final" change
+  | PitchChange String
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -82,11 +85,12 @@ render st =
         [ HH.text "Pitch"
         , HH.input
             [ HP.type_ InputRange
-            , HP.min 0.0
-            , HP.max 2.0
+            , HP.min U.pitchMin
+            , HP.max U.pitchMax
             , HP.step $ Step 0.1
             , HP.value (show st.pitchRateVolume.pitch)
-            , HE.onValueChange PitchChanged
+            , HE.onValueInput PitchInput
+            , HE.onValueChange PitchChange
             ]
         , HH.text $ show st.pitchRateVolume.pitch
         ]
@@ -170,10 +174,13 @@ handleAction = case _ of
               Nothing -> signalError "No TTS support while trying to read"
               Just tts -> H.liftEffect $ TTS.speak tts utt
             pure unit
-  PitchChanged str -> do
+  PitchInput str -> do
     case fromString str of
       Nothing -> pure unit
       Just val -> H.modify_ \st -> st { pitchRateVolume = st.pitchRateVolume { pitch = val } }
+  PitchChange str -> do
+    handleAction $ PitchInput str
+    handleAction Read
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
