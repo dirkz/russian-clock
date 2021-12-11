@@ -3,9 +3,12 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
+import DOM.HTML.Indexed.InputType (InputType(..))
+import DOM.HTML.Indexed.StepValue (StepValue(..))
 import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.Number (fromString)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
@@ -43,6 +46,7 @@ data Action
   | Random
   | SelectVoice Int
   | Read
+  | PitchChanged String
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -73,6 +77,18 @@ render st =
     , HH.p [ HP.classes [ HH.ClassName "voice-selection" ] ]
         [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
             (map voiceOption st.voices)
+        ]
+    , HH.p [ HP.classes [ HH.ClassName "pitch" ] ]
+        [ HH.text "Pitch"
+        , HH.input
+            [ HP.type_ InputRange
+            , HP.min 0.0
+            , HP.max 2.0
+            , HP.step $ Step 0.1
+            , HP.value (show st.pitchRateVolume.pitch)
+            , HE.onValueChange PitchChanged
+            ]
+        , HH.text $ show st.pitchRateVolume.pitch
         ]
     , HH.p [ HP.classes [ HH.ClassName "clock" ] ] []
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
@@ -154,6 +170,10 @@ handleAction = case _ of
               Nothing -> signalError "No TTS support while trying to read"
               Just tts -> H.liftEffect $ TTS.speak tts utt
             pure unit
+  PitchChanged str -> do
+    case fromString str of
+      Nothing -> pure unit
+      Just val -> H.modify_ \st -> st { pitchRateVolume = st.pitchRateVolume { pitch = val } }
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
