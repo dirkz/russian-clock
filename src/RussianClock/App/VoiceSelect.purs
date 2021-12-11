@@ -1,5 +1,6 @@
 module RussianClock.App.VoiceSelect
-  ( component
+  ( Input
+  , component
   ) where
 
 import Prelude
@@ -20,17 +21,18 @@ import Web.Speech.TTS.Utterance (PitchRateVolume, defaultPitchRateVolume)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
-language ∷ String
-language = "ru-RU"
-
 none :: String
 none = "none"
+
+type Input
+  = { language :: Maybe String }
 
 type State
   = { voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
     , maybeError :: Maybe String
     , pitchRateVolume :: PitchRateVolume
+    , language :: Maybe String
     }
 
 data Action
@@ -41,15 +43,16 @@ data Action
   --| "Final" change
   | PitchChange String
 
-component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
+component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
 component =
   H.mkComponent
     { initialState:
-        \_ ->
+        \input ->
           { voices: []
           , maybeVoice: Nothing
           , maybeError: Nothing
           , pitchRateVolume: defaultPitchRateVolume
+          , language: input.language
           }
     , render
     , eval:
@@ -103,11 +106,12 @@ handleAction = case _ of
     case maybeSynth of
       Nothing -> signalError "No TTS support while trying to get the voices"
       Just synth -> do
+        st <- H.get
         voices <-
-          map (map (filter (\v -> V.lang v == language)))
+          map (map (filter (filterForLanguage st)))
             H.liftAff
             $ TTS.voices synth
-        H.modify_ \st -> st { voices = voices, maybeVoice = voices !! 0 }
+        H.modify_ \st2 -> st2 { voices = voices, maybeVoice = voices !! 0 }
   SelectVoice i -> do
     H.modify_ \st -> st { maybeVoice = st.voices !! i }
   PitchInput str -> do
@@ -118,3 +122,7 @@ handleAction = case _ of
     handleAction $ PitchInput str
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
+
+  filterForLanguage st voice = case st.language of
+    Nothing -> true
+    Just lang -> V.lang voice == lang
