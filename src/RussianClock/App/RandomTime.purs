@@ -177,7 +177,7 @@ handleAction = case _ of
   PitchInput str -> do
     case fromString str of
       Nothing -> pure unit
-      Just val -> H.modify_ \st -> st { pitchRateVolume = st.pitchRateVolume { pitch = val } }
+      Just val -> H.modify_ \st -> st { pitchRateVolume { pitch = val } }
   PitchChange str -> do
     handleAction $ PitchInput str
     handleAction Read
