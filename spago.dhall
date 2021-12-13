@@ -5,6 +5,7 @@
   , "console"
   , "dom-indexed"
   , "effect"
+  , "foldable-traversable"
   , "halogen"
   , "integers"
   , "maybe"
