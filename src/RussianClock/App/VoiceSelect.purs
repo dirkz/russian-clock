@@ -27,7 +27,7 @@ none :: String
 none = "none"
 
 data Output
-  --|The chosen voice
+  --|The voice was selected.
   = Voice V.Voice
 
 --|Configuration for the voice selector.
