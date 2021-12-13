@@ -47,6 +47,7 @@ data Action
   | Random
   | SelectVoice Int
   | Read
+  | HandleVoiceSelection VS.Output
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -72,12 +73,13 @@ render :: forall m. MonadEffect m => MonadAff m => State -> H.ComponentHTML Acti
 render st =
   HH.article [ HP.classes [ HH.ClassName "container" ] ]
     [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "Russian Time" ]
-    , HH.slot_ _voiceSelect 0 VS.component
+    , HH.slot _voiceSelect 0 VS.component
         { language: Just language
         , classContainer: "voice-selection"
         , classError: "voice-selection-error"
         , classVoiceName: "voice-selection-voice"
         }
+        HandleVoiceSelection
     , HH.p [ HP.classes [ HH.ClassName "clock" ] ] []
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
         [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
@@ -153,6 +155,10 @@ handleAction = case _ of
               Nothing -> signalError "No TTS support while trying to read"
               Just tts -> H.liftEffect $ TTS.speak tts utt
             pure unit
+  HandleVoiceSelection output -> case output of
+    VS.Voice v -> do
+      H.modify_ \st -> st { maybeVoice = Just v }
+      handleAction Read
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
