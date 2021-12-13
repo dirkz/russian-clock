@@ -19,7 +19,6 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
-import Web.Speech.TTS.Utterance (PitchRateVolume, defaultPitchRateVolume)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
@@ -49,7 +48,7 @@ type State
   = { voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
     , maybeError :: Maybe String
-    , pitchRateVolume :: PitchRateVolume
+    , pitchRateVolume :: U.PitchRateVolume
     , language :: Maybe String
     , classContainer :: String
     , classError :: String
@@ -83,7 +82,7 @@ component =
           { voices: []
           , maybeVoice: Nothing
           , maybeError: Nothing
-          , pitchRateVolume: defaultPitchRateVolume
+          , pitchRateVolume: U.defaultPitchRateVolume
           , language: input.language
           , classContainer: input.classContainer
           , classError: input.classError
