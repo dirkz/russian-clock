@@ -1,7 +1,6 @@
 module Main
   ( main
-  )
-  where
+  ) where
 
 import Prelude
 import Data.Maybe (Maybe(..))
@@ -14,4 +13,9 @@ main :: Effect Unit
 main =
   HA.runHalogenAff do
     body <- HA.awaitBody
-    runUI VS.component { language: Just "ru-RU" } body
+    runUI VS.component
+      { language: Just "ru-RU"
+      , classContainer: "voice-selection"
+      , classError: "voice-selection-error"
+      }
+      body

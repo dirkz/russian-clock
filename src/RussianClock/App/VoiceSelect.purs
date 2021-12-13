@@ -26,10 +26,18 @@ none = "none"
 
 --|Configuration for the voice selector.
 --|
+--|The component expects the container class to be set as a grid with 3 elements in a row.
+--|
 --| Notes:
 --| * `language`: A language (e.g., "ru-RU") if you want only voices for that langugage.
+--| * `classContainer`: The css class name of the container.
+--| * `classError`: The css class name of the error paragraph, which spans a whole row
+--|   (3 elements).
 type Input
-  = { language :: Maybe String }
+  = { language :: Maybe String
+    , classContainer :: String
+    , classError :: String
+    }
 
 type State
   = { voices :: Array V.Voice
@@ -37,6 +45,8 @@ type State
     , maybeError :: Maybe String
     , pitchRateVolume :: PitchRateVolume
     , language :: Maybe String
+    , classContainer :: String
+    , classError :: String
     }
 
 data Action
@@ -57,6 +67,8 @@ component =
           , maybeError: Nothing
           , pitchRateVolume: defaultPitchRateVolume
           , language: input.language
+          , classContainer: input.classContainer
+          , classError: input.classError
           }
     , render
     , eval:
@@ -69,32 +81,28 @@ component =
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
-  HH.article [ HP.classes [ HH.ClassName "container" ] ]
-    [ HH.div [ HP.classes [ HH.ClassName "voice-control" ] ]
-        [ HH.p_ [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
-        , HH.p_ []
-        , HH.p_
-            [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
-                (map voiceOption st.voices)
-            ]
-        , HH.p_ [ HH.text "Pitch" ]
-        , HH.p_
-            [ HH.input
-                [ HP.type_ InputRange
-                , HP.min U.pitchMin
-                , HP.max U.pitchMax
-                , HP.step $ Step 0.1
-                , HP.value (show st.pitchRateVolume.pitch)
-                , HE.onValueInput PitchInput
-                , HE.onValueChange PitchChange
-                ]
-            ]
-        , HH.p_ [ HH.text $ show st.pitchRateVolume.pitch ]
-        ]
-    , HH.p [ HP.classes [ HH.ClassName "clock" ] ] []
+  HH.article [ HP.classes [ HH.ClassName st.classContainer ] ]
+    [ HH.p_ [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
     , case st.maybeError of
         Nothing -> HH.text ""
-        Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
+        Just err -> HH.p [ HP.classes [ HH.ClassName st.classError ] ] [ HH.text err ]
+    , HH.p_
+        [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
+            (map voiceOption st.voices)
+        ]
+    , HH.p_ [ HH.text "Pitch" ]
+    , HH.p_
+        [ HH.input
+            [ HP.type_ InputRange
+            , HP.min U.pitchMin
+            , HP.max U.pitchMax
+            , HP.step $ Step 0.1
+            , HP.value (show st.pitchRateVolume.pitch)
+            , HE.onValueInput PitchInput
+            , HE.onValueChange PitchChange
+            ]
+        ]
+    , HH.p_ [ HH.text $ show st.pitchRateVolume.pitch ]
     ]
   where
   voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"

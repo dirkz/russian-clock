@@ -4,7 +4,7 @@
     display: grid;
     grid-template-areas:
         ". title ."
-        "voice-control voice-control voice-control"
+        "voice-selection voice-selection voice-selection"
         ". clock pitch"
         ". time ."
         ". error ."
@@ -18,8 +18,8 @@
     grid-area: title;
 }
 
-.voice-control {
-    grid-area: voice-control;
+.voice-selection {
+    grid-area: voice-selection;
 }
 
 .time {
@@ -46,8 +46,13 @@
 
 /* Pitch Volume Rate controls */
 
-.voice-control {
+.voice-selection {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 20px;
+}
+
+.voice-selection .voice-selection-error {
+    grid-column: 1 / 3;
+    color: red;
 }
