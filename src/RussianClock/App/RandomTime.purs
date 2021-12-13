@@ -6,7 +6,6 @@ import Prelude
 import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
-import Data.Number (fromString)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
@@ -48,10 +47,6 @@ data Action
   | Random
   | SelectVoice Int
   | Read
-  --| All changes on-the-fly
-  | PitchInput String
-  --| "Final" change
-  | PitchChange String
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -158,13 +153,6 @@ handleAction = case _ of
               Nothing -> signalError "No TTS support while trying to read"
               Just tts -> H.liftEffect $ TTS.speak tts utt
             pure unit
-  PitchInput str -> do
-    case fromString str of
-      Nothing -> pure unit
-      Just val -> H.modify_ \st -> st { pitchRateVolume { pitch = val } }
-  PitchChange str -> do
-    handleAction $ PitchInput str
-    handleAction Read
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
