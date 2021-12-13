@@ -61,6 +61,10 @@ data Action
   | RateInput String
   --| "Final" rate change
   | RateChange String
+  --| All volume changes on-the-fly
+  | VolumeInput String
+  --| "Final" volume change
+  | VolumeChange String
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
@@ -124,6 +128,19 @@ render st =
             ]
         ]
     , HH.p_ [ HH.text $ show st.pitchRateVolume.rate ]
+    , HH.p_ [ HH.text "Volume" ]
+    , HH.p_
+        [ HH.input
+            [ HP.type_ InputRange
+            , HP.min U.volumeMin
+            , HP.max U.volumeMax
+            , HP.step $ Step 0.1
+            , HP.value (show st.pitchRateVolume.volume)
+            , HE.onValueInput VolumeInput
+            , HE.onValueChange VolumeChange
+            ]
+        ]
+    , HH.p_ [ HH.text $ show st.pitchRateVolume.volume ]
     ]
   where
   voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"
@@ -158,6 +175,12 @@ handleAction = case _ of
       Just val -> H.modify_ \st -> st { pitchRateVolume { rate = val } }
   RateChange str -> do
     handleAction $ RateInput str
+  VolumeInput str -> do
+    case fromString str of
+      Nothing -> pure unit
+      Just val -> H.modify_ \st -> st { pitchRateVolume { volume = val } }
+  VolumeChange str -> do
+    handleAction $ VolumeInput str
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
