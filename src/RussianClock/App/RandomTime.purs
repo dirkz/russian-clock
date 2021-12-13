@@ -74,7 +74,6 @@ render st =
     , HH.slot _voiceSelect 0 VS.component
         { language: Just language
         , classContainer: "voice-selection"
-        , classError: "voice-selection-error"
         , classVoiceName: "voice-selection-voice"
         }
         HandleVoiceSelection
@@ -137,6 +136,7 @@ handleAction = case _ of
     VS.Voice v -> do
       H.modify_ \st -> st { maybeVoice = Just v }
       handleAction Read
+    VS.Error str -> H.modify_ \st -> st { maybeError = Just str }
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 

@@ -28,6 +28,8 @@ none = "none"
 data Output
   --|The voice was selected.
   = Voice V.Voice
+  --|An error occurred.
+  | Error String
 
 --|Configuration for the voice selector.
 --|
@@ -35,23 +37,19 @@ data Output
 --| * `language`: An optional language (e.g., "ru-RU") if you want only voices for that langugage.
 --| * `classContainer`: The css class name of the container.
 --|   Must be a grid with three columns per row, the elements of which will be paragraphs.
---| * `classError`: The css class name of the error paragraph, which spans a whole row.
 --| * `classVoiceName`: The css class name of the voice name paragraph, which should span two columns.
 type Input
   = { language :: Maybe String
     , classContainer :: String
-    , classError :: String
     , classVoiceName :: String
     }
 
 type State
   = { voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
-    , maybeError :: Maybe String
     , pitchRateVolume :: U.PitchRateVolume
     , language :: Maybe String
     , classContainer :: String
-    , classError :: String
     , classVoiceName :: String
     }
 
@@ -81,11 +79,9 @@ component =
         \input ->
           { voices: []
           , maybeVoice: Nothing
-          , maybeError: Nothing
           , pitchRateVolume: U.defaultPitchRateVolume
           , language: input.language
           , classContainer: input.classContainer
-          , classError: input.classError
           , classVoiceName: input.classVoiceName
           }
     , render
@@ -106,9 +102,6 @@ render st =
         [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
             (map voiceOption st.voices)
         ]
-    , case st.maybeError of
-        Nothing -> HH.text ""
-        Just err -> HH.p [ HP.classes [ HH.ClassName st.classError ] ] [ HH.text err ]
     , HH.p_ [ HH.text "Pitch" ]
     , HH.p_
         [ HH.input
@@ -194,7 +187,7 @@ handleAction = case _ of
     st <- H.get
     traverse_ (H.raise <<< Voice) st.maybeVoice
   where
-  signalError string = H.modify_ \st -> st { maybeError = Just string }
+  signalError string = H.raise $ Error string
 
   filterForLanguage st voice = case st.language of
     Nothing -> true
