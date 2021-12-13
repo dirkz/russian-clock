@@ -66,8 +66,7 @@ component =
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   HH.article [ HP.classes [ HH.ClassName "container" ] ]
-    [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "Russian Time" ]
-    , HH.div [ HP.classes [ HH.ClassName "voice-control" ] ]
+    [ HH.div [ HP.classes [ HH.ClassName "voice-control" ] ]
         [ HH.p_ [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
         , HH.p_ []
         , HH.p_
