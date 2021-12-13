@@ -29,10 +29,9 @@ none = "none"
 --| Notes:
 --| * `language`: An optional language (e.g., "ru-RU") if you want only voices for that langugage.
 --| * `classContainer`: The css class name of the container.
---|   Must be a grid with three columns per row.
---| * `classError`: The css class name of the error paragraph, which spans a whole row
---|   (three elements).
---| * `classVoiceName`: The css class name of the voice name paragraph, which should span two rows.
+--|   Must be a grid with three columns per row, the elements of which will be paragraphs.
+--| * `classError`: The css class name of the error paragraph, which spans a whole row.
+--| * `classVoiceName`: The css class name of the voice name paragraph, which should span two columns.
 type Input
   = { language :: Maybe String
     , classContainer :: String
