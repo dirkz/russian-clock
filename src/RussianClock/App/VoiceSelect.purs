@@ -19,6 +19,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
+import Web.Speech.TTS.Utterance (PitchRateVolume)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
@@ -30,6 +31,8 @@ data Output
   = Voice V.Voice
   --|An error occurred.
   | Error String
+  --|A value of pitch, rate or volume changed (to a final value after user interaction).
+  | PitchRateVolume PitchRateVolume
 
 --|Configuration for the voice selector.
 --|
@@ -168,21 +171,27 @@ handleAction = case _ of
   PitchInput str -> do
     case fromString str of
       Nothing -> pure unit
-      Just val -> H.modify_ \st -> st { pitchRateVolume { pitch = val } }
+      Just val -> do
+        H.modify_ \st -> st { pitchRateVolume { pitch = val } }
   PitchChange str -> do
     handleAction $ PitchInput str
+    signalPitchRateVolumeChange
   RateInput str -> do
     case fromString str of
       Nothing -> pure unit
-      Just val -> H.modify_ \st -> st { pitchRateVolume { rate = val } }
+      Just val -> do
+        H.modify_ \st -> st { pitchRateVolume { rate = val } }
   RateChange str -> do
     handleAction $ RateInput str
+    signalPitchRateVolumeChange
   VolumeInput str -> do
     case fromString str of
       Nothing -> pure unit
-      Just val -> H.modify_ \st -> st { pitchRateVolume { volume = val } }
+      Just val -> do
+        H.modify_ \st -> st { pitchRateVolume { volume = val } }
   VolumeChange str -> do
     handleAction $ VolumeInput str
+    signalPitchRateVolumeChange
   RaiseVoice -> do
     st <- H.get
     traverse_ (H.raise <<< Voice) st.maybeVoice
@@ -192,3 +201,7 @@ handleAction = case _ of
   filterForLanguage st voice = case st.language of
     Nothing -> true
     Just lang -> V.lang voice == lang
+
+  signalPitchRateVolumeChange = do
+    { pitchRateVolume } <- H.get
+    H.raise $ PitchRateVolume pitchRateVolume

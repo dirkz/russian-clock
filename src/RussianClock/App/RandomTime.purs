@@ -137,6 +137,9 @@ handleAction = case _ of
       H.modify_ \st -> st { maybeVoice = Just v }
       handleAction Read
     VS.Error str -> H.modify_ \st -> st { maybeError = Just str }
+    VS.PitchRateVolume pitchRateVolume -> do
+      H.modify_ \st -> st { pitchRateVolume = pitchRateVolume }
+      handleAction Read
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
