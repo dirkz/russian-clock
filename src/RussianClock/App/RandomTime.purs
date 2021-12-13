@@ -3,8 +3,6 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
-import DOM.HTML.Indexed.InputType (InputType(..))
-import DOM.HTML.Indexed.StepValue (StepValue(..))
 import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
@@ -23,6 +21,8 @@ import Web.Speech.TTS as TTS
 import Web.Speech.TTS.Utterance (PitchRateVolume, defaultPitchRateVolume)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
+import RussianClock.App.VoiceSelect as VS
+import Type.Proxy (Proxy(..))
 
 unknown :: String
 unknown = "unknown"
@@ -30,8 +30,10 @@ unknown = "unknown"
 language ∷ String
 language = "ru-RU"
 
-none :: String
-none = "none"
+type SlotsVoiceSelect
+  = ( voiceSelect :: forall query. H.Slot query Void Int )
+
+_voiceSelect = Proxy :: Proxy "voiceSelect"
 
 type State
   = { maybeTime :: Maybe TimeStruct
@@ -71,31 +73,16 @@ component =
             }
     }
 
-render :: forall cs m. State -> H.ComponentHTML Action cs m
+render :: forall m. MonadEffect m => MonadAff m => State -> H.ComponentHTML Action SlotsVoiceSelect m
 render st =
   HH.article [ HP.classes [ HH.ClassName "container" ] ]
     [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "Russian Time" ]
-    , HH.div [ HP.classes [ HH.ClassName "voice-control" ] ]
-        [ HH.p_ [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
-        , HH.p_ []
-        , HH.p_
-            [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
-                (map voiceOption st.voices)
-            ]
-        , HH.p_ [ HH.text "Pitch" ]
-        , HH.p_
-            [ HH.input
-                [ HP.type_ InputRange
-                , HP.min U.pitchMin
-                , HP.max U.pitchMax
-                , HP.step $ Step 0.1
-                , HP.value (show st.pitchRateVolume.pitch)
-                , HE.onValueInput PitchInput
-                , HE.onValueChange PitchChange
-                ]
-            ]
-        , HH.p_ [ HH.text $ show st.pitchRateVolume.pitch ]
-        ]
+    , HH.slot_ _voiceSelect 0 VS.component
+        { language: Just language
+        , classContainer: "voice-selection"
+        , classError: "voice-selection-error"
+        , classVoiceName: "voice-selection-voice"
+        }
     , HH.p [ HP.classes [ HH.ClassName "clock" ] ] []
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
         [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
