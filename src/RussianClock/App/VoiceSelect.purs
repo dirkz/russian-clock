@@ -56,6 +56,7 @@ data Action
   --| "Final" change
   | PitchChange String
 
+--|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
 component =
   H.mkComponent
