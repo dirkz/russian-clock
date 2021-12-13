@@ -3,7 +3,6 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
-import Data.Array (filter, (!!))
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Effect.Aff.Class (class MonadAff)
@@ -45,7 +44,6 @@ type State
 data Action
   = Initialize
   | Random
-  | SelectVoice Int
   | Read
   | HandleVoiceSelection VS.Output
 
@@ -103,24 +101,7 @@ render st =
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
-  Initialize -> do
-    handleAction Random
-    w <- H.liftEffect window
-    maybeSynth <- H.liftEffect $ TTS.tts w
-    case maybeSynth of
-      Nothing ->
-        H.modify_ \st ->
-          st
-            { maybeError =
-              Just "No TTS support while trying to get the voices"
-            }
-      Just synth -> do
-        voices <-
-          map (map (filter (\v -> V.lang v == language)))
-            H.liftAff
-            $ TTS.voices synth
-        H.modify_ \st -> st { voices = voices, maybeVoice = voices !! 0 }
-        handleAction Read
+  Initialize -> handleAction Random
   Random -> do
     eraseError
     rh <- H.liftEffect random
@@ -135,9 +116,6 @@ handleAction = case _ of
       st
         { maybeTime = Just time
         }
-    handleAction Read
-  SelectVoice i -> do
-    H.modify_ \st -> st { maybeVoice = st.voices !! i }
     handleAction Read
   Read -> do
     eraseError
