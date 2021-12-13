@@ -1,9 +1,11 @@
 module RussianClock.App.VoiceSelect
   ( Input
+  , Output(..)
   , component
   ) where
 
 import Prelude
+
 import DOM.HTML.Indexed.InputType (InputType(..))
 import DOM.HTML.Indexed.StepValue (StepValue(..))
 import Data.Array (filter, (!!))
@@ -23,6 +25,9 @@ import Web.Speech.TTS.Voice as V
 
 none :: String
 none = "none"
+
+data Output
+  = Voice V.Voice
 
 --|Configuration for the voice selector.
 --|
@@ -67,7 +72,7 @@ data Action
   | VolumeChange String
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
-component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
+component :: forall q m. MonadEffect m => MonadAff m => H.Component q Input Output m
 component =
   H.mkComponent
     { initialState:
@@ -147,7 +152,7 @@ render st =
 
   voiceOption voice = HH.option_ [ HH.text (voiceName voice) ]
 
-handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
+handleAction :: forall cs m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs Output m Unit
 handleAction = case _ of
   Initialize -> do
     w <- H.liftEffect window
@@ -163,6 +168,10 @@ handleAction = case _ of
         H.modify_ \st2 -> st2 { voices = voices, maybeVoice = voices !! 0 }
   SelectVoice i -> do
     H.modify_ \st -> st { maybeVoice = st.voices !! i }
+    st <- H.get
+    case st.maybeVoice of
+      Just v -> H.raise $ Voice v
+      Nothing -> pure unit
   PitchInput str -> do
     case fromString str of
       Nothing -> pure unit
