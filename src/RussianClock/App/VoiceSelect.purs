@@ -5,7 +5,6 @@ module RussianClock.App.VoiceSelect
   ) where
 
 import Prelude
-
 import DOM.HTML.Indexed.InputType (InputType(..))
 import DOM.HTML.Indexed.StepValue (StepValue(..))
 import Data.Array (filter, (!!))
@@ -57,7 +56,7 @@ type State
 
 data Action
   = Initialize
-  | SelectVoice Int
+  | SelectVoiceByIndex Int
   --| All pitch changes on-the-fly
   | PitchInput String
   --| "Final" pitch change
@@ -101,7 +100,7 @@ render st =
     [ HH.p [ HP.classes [ HH.ClassName st.classVoiceName ] ]
         [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
     , HH.p_
-        [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
+        [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
             (map voiceOption st.voices)
         ]
     , case st.maybeError of
@@ -166,7 +165,7 @@ handleAction = case _ of
             H.liftAff
             $ TTS.voices synth
         H.modify_ \st2 -> st2 { voices = voices, maybeVoice = voices !! 0 }
-  SelectVoice i -> do
+  SelectVoiceByIndex i -> do
     H.modify_ \st -> st { maybeVoice = st.voices !! i }
     st <- H.get
     case st.maybeVoice of
