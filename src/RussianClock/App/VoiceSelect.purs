@@ -8,6 +8,7 @@ import Prelude
 import DOM.HTML.Indexed.InputType (InputType(..))
 import DOM.HTML.Indexed.StepValue (StepValue(..))
 import Data.Array (filter, (!!))
+import Data.Foldable (traverse_)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Number (fromString)
 import Effect.Aff.Class (class MonadAff)
@@ -190,9 +191,7 @@ handleAction = case _ of
     handleAction $ VolumeInput str
   RaiseVoice -> do
     st <- H.get
-    case st.maybeVoice of
-      Just v -> H.raise $ Voice v
-      Nothing -> pure unit
+    traverse_ (\v -> H.raise $ Voice v) st.maybeVoice
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
