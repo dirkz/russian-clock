@@ -191,7 +191,7 @@ handleAction = case _ of
     handleAction $ VolumeInput str
   RaiseVoice -> do
     st <- H.get
-    traverse_ (\v -> H.raise $ Voice v) st.maybeVoice
+    traverse_ (H.raise <<< Voice) st.maybeVoice
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
