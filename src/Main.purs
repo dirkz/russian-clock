@@ -17,5 +17,6 @@ main =
       { language: Just "ru-RU"
       , classContainer: "voice-selection"
       , classError: "voice-selection-error"
+      , classVoiceName: "voice-selection-voice"
       }
       body

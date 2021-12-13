@@ -32,10 +32,12 @@ none = "none"
 --|   Must be a grid with three columns per row.
 --| * `classError`: The css class name of the error paragraph, which spans a whole row
 --|   (three elements).
+--| * `classVoiceName`: The css class name of the voice name paragraph, which should span two rows.
 type Input
   = { language :: Maybe String
     , classContainer :: String
     , classError :: String
+    , classVoiceName :: String
     }
 
 type State
@@ -46,6 +48,7 @@ type State
     , language :: Maybe String
     , classContainer :: String
     , classError :: String
+    , classVoiceName :: String
     }
 
 data Action
@@ -69,6 +72,7 @@ component =
           , language: input.language
           , classContainer: input.classContainer
           , classError: input.classError
+          , classVoiceName: input.classVoiceName
           }
     , render
     , eval:
@@ -82,14 +86,15 @@ component =
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   HH.article [ HP.classes [ HH.ClassName st.classContainer ] ]
-    [ HH.p_ [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
-    , case st.maybeError of
-        Nothing -> HH.text ""
-        Just err -> HH.p [ HP.classes [ HH.ClassName st.classError ] ] [ HH.text err ]
+    [ HH.p [ HP.classes [ HH.ClassName st.classVoiceName ] ]
+        [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
     , HH.p_
         [ HH.select [ HE.onSelectedIndexChange SelectVoice ]
             (map voiceOption st.voices)
         ]
+    , case st.maybeError of
+        Nothing -> HH.text ""
+        Just err -> HH.p [ HP.classes [ HH.ClassName st.classError ] ] [ HH.text err ]
     , HH.p_ [ HH.text "Pitch" ]
     , HH.p_
         [ HH.input
