@@ -26,13 +26,12 @@ none = "none"
 
 --|Configuration for the voice selector.
 --|
---|The component expects the container class to be set as a grid with 3 elements per row.
---|
 --| Notes:
---| * `language`: A language (e.g., "ru-RU") if you want only voices for that langugage.
+--| * `language`: An optional language (e.g., "ru-RU") if you want only voices for that langugage.
 --| * `classContainer`: The css class name of the container.
+--|   Must be a grid with three columns per row.
 --| * `classError`: The css class name of the error paragraph, which spans a whole row
---|   (3 elements).
+--|   (three elements).
 type Input
   = { language :: Maybe String
     , classContainer :: String
