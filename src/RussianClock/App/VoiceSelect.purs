@@ -24,6 +24,10 @@ import Web.Speech.TTS.Voice as V
 none :: String
 none = "none"
 
+--|Configuration for the voice selector.
+--|
+--| Notes:
+--| * `language`: A language (e.g., "ru-RU") if you want only voices for that langugage.
 type Input
   = { language :: Maybe String }
 
