@@ -69,6 +69,7 @@ data Action
   | VolumeInput String
   --| "Final" volume change
   | VolumeChange String
+  | RaiseVoice
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q m. MonadEffect m => MonadAff m => H.Component q Input Output m
@@ -165,12 +166,10 @@ handleAction = case _ of
             H.liftAff
             $ TTS.voices synth
         H.modify_ \st2 -> st2 { voices = voices, maybeVoice = voices !! 0 }
+        handleAction RaiseVoice
   SelectVoiceByIndex i -> do
     H.modify_ \st -> st { maybeVoice = st.voices !! i }
-    st <- H.get
-    case st.maybeVoice of
-      Just v -> H.raise $ Voice v
-      Nothing -> pure unit
+    handleAction RaiseVoice
   PitchInput str -> do
     case fromString str of
       Nothing -> pure unit
@@ -189,6 +188,11 @@ handleAction = case _ of
       Just val -> H.modify_ \st -> st { pitchRateVolume { volume = val } }
   VolumeChange str -> do
     handleAction $ VolumeInput str
+  RaiseVoice -> do
+    st <- H.get
+    case st.maybeVoice of
+      Just v -> H.raise $ Voice v
+      Nothing -> pure unit
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
