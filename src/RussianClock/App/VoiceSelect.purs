@@ -71,7 +71,7 @@ data Action
   | VolumeInput String
   --|"Final" volume change
   | VolumeChange String
-  |--|Communicate the chosen voice to the parent
+  --|Communicate the chosen voice to the parent
   | RaiseVoice
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
