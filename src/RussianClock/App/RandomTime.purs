@@ -30,7 +30,7 @@ language ∷ String
 language = "ru-RU"
 
 type Slots
-  = ( voiceSelect :: forall query. H.Slot query Void Int )
+  = ( voiceSelect :: forall query. H.Slot query VS.Output Int )
 
 _voiceSelect = Proxy :: Proxy "voiceSelect"
 
