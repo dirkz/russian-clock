@@ -53,10 +53,14 @@ type State
 data Action
   = Initialize
   | SelectVoice Int
-  --| All changes on-the-fly
+  --| All pitch changes on-the-fly
   | PitchInput String
-  --| "Final" change
+  --| "Final" pitch change
   | PitchChange String
+  --| All rate changes on-the-fly
+  | RateInput String
+  --| "Final" rate change
+  | RateChange String
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
@@ -107,6 +111,19 @@ render st =
             ]
         ]
     , HH.p_ [ HH.text $ show st.pitchRateVolume.pitch ]
+    , HH.p_ [ HH.text "Rate" ]
+    , HH.p_
+        [ HH.input
+            [ HP.type_ InputRange
+            , HP.min U.rateMin
+            , HP.max U.rateMax
+            , HP.step $ Step 0.1
+            , HP.value (show st.pitchRateVolume.rate)
+            , HE.onValueInput RateInput
+            , HE.onValueChange RateChange
+            ]
+        ]
+    , HH.p_ [ HH.text $ show st.pitchRateVolume.rate ]
     ]
   where
   voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"
@@ -135,6 +152,12 @@ handleAction = case _ of
       Just val -> H.modify_ \st -> st { pitchRateVolume { pitch = val } }
   PitchChange str -> do
     handleAction $ PitchInput str
+  RateInput str -> do
+    case fromString str of
+      Nothing -> pure unit
+      Just val -> H.modify_ \st -> st { pitchRateVolume { rate = val } }
+  RateChange str -> do
+    handleAction $ RateInput str
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
