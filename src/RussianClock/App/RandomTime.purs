@@ -29,7 +29,7 @@ unknown = "unknown"
 language ∷ String
 language = "ru-RU"
 
-type SlotsVoiceSelect
+type Slots
   = ( voiceSelect :: forall query. H.Slot query Void Int )
 
 _voiceSelect = Proxy :: Proxy "voiceSelect"
@@ -68,7 +68,7 @@ component =
             }
     }
 
-render :: forall m. MonadEffect m => MonadAff m => State -> H.ComponentHTML Action SlotsVoiceSelect m
+render :: forall m. MonadEffect m => MonadAff m => State -> H.ComponentHTML Action Slots m
 render st =
   HH.article [ HP.classes [ HH.ClassName "container" ] ]
     [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "Russian Time" ]
