@@ -27,6 +27,7 @@ none :: String
 none = "none"
 
 data Output
+  --|The chosen voice
   = Voice V.Voice
 
 --|Configuration for the voice selector.
@@ -58,18 +59,19 @@ type State
 data Action
   = Initialize
   | SelectVoiceByIndex Int
-  --| All pitch changes on-the-fly
+  --|All pitch changes on-the-fly
   | PitchInput String
-  --| "Final" pitch change
+  --|"Final" pitch change
   | PitchChange String
-  --| All rate changes on-the-fly
+  --|All rate changes on-the-fly
   | RateInput String
-  --| "Final" rate change
+  --|"Final" rate change
   | RateChange String
-  --| All volume changes on-the-fly
+  --|All volume changes on-the-fly
   | VolumeInput String
-  --| "Final" volume change
+  --|"Final" volume change
   | VolumeChange String
+  |--|Communicate the chosen voice to the parent
   | RaiseVoice
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
