@@ -102,10 +102,6 @@ render st =
         ]
     ]
   where
-  voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"
-
-  voiceOption voice = HH.option_ [ HH.text (voiceName voice) ]
-
   canRead = isJust st.maybeVoice && isJust st.maybeTime
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
