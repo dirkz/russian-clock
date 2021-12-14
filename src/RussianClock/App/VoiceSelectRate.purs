@@ -5,6 +5,7 @@ module RussianClock.App.VoiceSelectRate
   ) where
 
 import Prelude
+
 import DOM.HTML.Indexed.InputType (InputType(..))
 import DOM.HTML.Indexed.StepValue (StepValue(..))
 import Data.Array (filter, (!!))
@@ -19,7 +20,6 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
-import Web.Speech.TTS.Utterance (PitchRateVolume)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
@@ -31,8 +31,8 @@ data Output
   = Voice V.Voice
   --|An error occurred.
   | Error String
-  --|A value of pitch, rate or volume changed (to a final value after user interaction).
-  | PitchRateVolume PitchRateVolume
+  --|The rate changed.
+  | Rate Number
 
 --|Configuration for the voice selector.
 --|
@@ -50,7 +50,7 @@ type Input
 type State
   = { voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
-    , pitchRateVolume :: U.PitchRateVolume
+    , rate :: Number
     , language :: Maybe String
     , classContainer :: String
     , classVoiceName :: String
@@ -59,18 +59,10 @@ type State
 data Action
   = Initialize
   | SelectVoiceByIndex Int
-  --|All pitch changes on-the-fly
-  | PitchInput String
-  --|"Final" pitch change
-  | PitchChange String
   --|All rate changes on-the-fly
   | RateInput String
   --|"Final" rate change
   | RateChange String
-  --|All volume changes on-the-fly
-  | VolumeInput String
-  --|"Final" volume change
-  | VolumeChange String
   --|Communicate the chosen voice to the parent
   | RaiseVoice
 
@@ -82,7 +74,7 @@ component =
         \input ->
           { voices: []
           , maybeVoice: Nothing
-          , pitchRateVolume: U.defaultPitchRateVolume
+          , rate: U.defaultRate
           , language: input.language
           , classContainer: input.classContainer
           , classVoiceName: input.classVoiceName
@@ -105,19 +97,6 @@ render st =
         [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
             (map voiceOption st.voices)
         ]
-    , HH.p_ [ HH.text "Pitch" ]
-    , HH.p_
-        [ HH.input
-            [ HP.type_ InputRange
-            , HP.min U.pitchMin
-            , HP.max U.pitchMax
-            , HP.step $ Step 0.1
-            , HP.value (show st.pitchRateVolume.pitch)
-            , HE.onValueInput PitchInput
-            , HE.onValueChange PitchChange
-            ]
-        ]
-    , HH.p_ [ HH.text $ show st.pitchRateVolume.pitch ]
     , HH.p_ [ HH.text "Rate" ]
     , HH.p_
         [ HH.input
@@ -125,25 +104,12 @@ render st =
             , HP.min U.rateMin
             , HP.max U.rateMax
             , HP.step $ Step 0.1
-            , HP.value (show st.pitchRateVolume.rate)
+            , HP.value (show st.rate)
             , HE.onValueInput RateInput
             , HE.onValueChange RateChange
             ]
         ]
-    , HH.p_ [ HH.text $ show st.pitchRateVolume.rate ]
-    , HH.p_ [ HH.text "Volume" ]
-    , HH.p_
-        [ HH.input
-            [ HP.type_ InputRange
-            , HP.min U.volumeMin
-            , HP.max U.volumeMax
-            , HP.step $ Step 0.1
-            , HP.value (show st.pitchRateVolume.volume)
-            , HE.onValueInput VolumeInput
-            , HE.onValueChange VolumeChange
-            ]
-        ]
-    , HH.p_ [ HH.text $ show st.pitchRateVolume.volume ]
+    , HH.p_ [ HH.text $ show st.rate ]
     ]
   where
   voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"
@@ -168,30 +134,14 @@ handleAction = case _ of
   SelectVoiceByIndex i -> do
     H.modify_ \st -> st { maybeVoice = st.voices !! i }
     handleAction RaiseVoice
-  PitchInput str -> do
-    case fromString str of
-      Nothing -> pure unit
-      Just val -> do
-        H.modify_ \st -> st { pitchRateVolume { pitch = val } }
-  PitchChange str -> do
-    handleAction $ PitchInput str
-    signalPitchRateVolumeChange
   RateInput str -> do
     case fromString str of
       Nothing -> pure unit
       Just val -> do
-        H.modify_ \st -> st { pitchRateVolume { rate = val } }
+        H.modify_ \st -> st { rate = val }
   RateChange str -> do
     handleAction $ RateInput str
-    signalPitchRateVolumeChange
-  VolumeInput str -> do
-    case fromString str of
-      Nothing -> pure unit
-      Just val -> do
-        H.modify_ \st -> st { pitchRateVolume { volume = val } }
-  VolumeChange str -> do
-    handleAction $ VolumeInput str
-    signalPitchRateVolumeChange
+    signalRateChange
   RaiseVoice -> do
     st <- H.get
     traverse_ (H.raise <<< Voice) st.maybeVoice
@@ -202,6 +152,6 @@ handleAction = case _ of
     Nothing -> true
     Just lang -> V.lang voice == lang
 
-  signalPitchRateVolumeChange = do
-    { pitchRateVolume } <- H.get
-    H.raise $ PitchRateVolume pitchRateVolume
+  signalRateChange = do
+    { rate } <- H.get
+    H.raise $ Rate rate
