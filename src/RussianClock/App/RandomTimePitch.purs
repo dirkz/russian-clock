@@ -19,7 +19,7 @@ import Web.Speech.TTS as TTS
 import Web.Speech.TTS.Utterance (PitchRateVolume, defaultPitchRateVolume)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
-import RussianClock.App.VoiceSelectPitch as VSP
+import RussianClock.App.VoiceSelectPitch as VS
 import Type.Proxy (Proxy(..))
 
 unknown :: String
@@ -29,7 +29,7 @@ language ∷ String
 language = "ru-RU"
 
 type Slots
-  = ( voiceSelect :: forall query. H.Slot query VSP.Output Int )
+  = ( voiceSelect :: VS.Slot Int )
 
 _voiceSelect = Proxy :: Proxy "voiceSelect"
 
@@ -45,7 +45,7 @@ data Action
   = Initialize
   | Random
   | Read
-  | HandleVoiceSelection VSP.Output
+  | HandleVoiceSelection VS.Output
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -71,7 +71,7 @@ render :: forall m. MonadEffect m => MonadAff m => State -> H.ComponentHTML Acti
 render st =
   HH.article [ HP.classes [ HH.ClassName "container" ] ]
     [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "Russian Time" ]
-    , HH.slot _voiceSelect 0 VSP.component
+    , HH.slot _voiceSelect 0 VS.component
         { language: Just language
         , classContainer: "voice-selection"
         , classVoiceName: "voice-selection-voice"
@@ -133,11 +133,11 @@ handleAction = case _ of
               Just tts -> H.liftEffect $ TTS.speak tts utt
             pure unit
   HandleVoiceSelection output -> case output of
-    VSP.Voice v -> do
+    VS.Voice v -> do
       H.modify_ \st -> st { maybeVoice = Just v }
       handleAction Read
-    VSP.Error str -> H.modify_ \st -> st { maybeError = Just str }
-    VSP.PitchRateVolume pitchRateVolume -> do
+    VS.Error str -> H.modify_ \st -> st { maybeError = Just str }
+    VS.PitchRateVolume pitchRateVolume -> do
       H.modify_ \st -> st { pitchRateVolume = pitchRateVolume }
       handleAction Read
   where

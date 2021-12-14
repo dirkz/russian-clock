@@ -1,8 +1,10 @@
 module RussianClock.App.VoiceSelect
   ( Input
   , Output(..)
+  , Slot
   , component
-  ) where
+  )
+  where
 
 import Prelude
 
@@ -46,6 +48,8 @@ type Input
     , classContainer :: String
     , classVoiceName :: String
     }
+
+type Slot id = forall q. H.Slot q Output id
 
 type State
   = { voices :: Array V.Voice

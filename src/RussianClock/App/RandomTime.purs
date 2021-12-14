@@ -3,7 +3,6 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
-
 import Data.Int (round)
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Effect.Aff.Class (class MonadAff)
@@ -30,7 +29,7 @@ language ∷ String
 language = "ru-RU"
 
 type Slots
-  = ( voiceSelect :: forall query. H.Slot query VS.Output Int )
+  = ( voiceSelect :: VS.Slot Int )
 
 _voiceSelect = Proxy :: Proxy "voiceSelect"
 
