@@ -131,7 +131,9 @@ handleAction = case _ of
             maybeTts <- H.liftEffect $ TTS.tts w
             case maybeTts of
               Nothing -> signalError "No TTS support while trying to read"
-              Just tts -> H.liftEffect $ TTS.speak tts utt
+              Just tts -> do
+                H.liftEffect $ TTS.cancel tts
+                H.liftEffect $ TTS.speak tts utt
             pure unit
   HandleVoiceSelection output -> case output of
     VS.Voice v -> do
