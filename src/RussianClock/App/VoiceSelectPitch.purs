@@ -1,4 +1,4 @@
-module RussianClock.App.VoiceSelectFull
+module RussianClock.App.VoiceSelectPitch
   ( Input
   , Output(..)
   , component
