@@ -21,6 +21,9 @@ import Web.Speech.TTS as TTS
 import Web.Speech.TTS.Utterance (defaultRate)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
+import Halogen.Svg.Elements as SE
+import Halogen.Svg.Attributes as SA
+import Halogen.Svg.Attributes.Align as SA
 
 unknown :: String
 unknown = "unknown"
@@ -77,7 +80,12 @@ render st =
         , classVoiceName: "voice-selection-voice"
         }
         HandleVoiceSelection
-    , HH.p [ HP.classes [ HH.ClassName "clock" ] ] []
+    -- , SE.svg
+    --     [ HP.classes [ HH.ClassName "clock" ]
+    --     , SA.viewBox 0.0 0.0 100.0 100.0
+    --     , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
+    --     ]
+    --     []
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
         [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
     , case st.maybeError of
