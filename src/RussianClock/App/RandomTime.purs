@@ -12,6 +12,8 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Svg.Attributes as SA
+import Halogen.Svg.Elements as SE
 import RussianClock.App.VoiceSelect as VS
 import RussianClock.Util.RussianTime (timeString)
 import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
@@ -21,8 +23,6 @@ import Web.Speech.TTS as TTS
 import Web.Speech.TTS.Utterance (defaultRate)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
-import Halogen.Svg.Elements as SE
-import Halogen.Svg.Attributes as SA
 
 unknown :: String
 unknown = "unknown"
@@ -84,7 +84,14 @@ render st =
         , SA.viewBox 0.0 0.0 100.0 100.0
         , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
         ]
-        []
+        [ SE.circle
+            [ SA.cx 50.0
+            , SA.cy 50.0
+            , SA.r 40.0
+            , SA.stroke $ SA.Named "black"
+            , SA.fill $ SA.NoColor
+            ]
+        ]
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
         [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
     , case st.maybeError of
