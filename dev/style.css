@@ -36,6 +36,7 @@
 
 .clock {
     grid-area: clock;
+    width: 20em;
 }
 
 /* Voice Selection */
