@@ -5,7 +5,7 @@
     grid-template-areas:
         ". title ."
         "voice-selection voice-selection voice-selection"
-        "clock clock clock"
+        ". clock ."
         ". time ."
         ". error ."
         ". random-time .";
@@ -37,7 +37,6 @@
 
 .clock {
     grid-area: clock;
-    min-height: 10em;
 }
 
 /* Voice Selection */
