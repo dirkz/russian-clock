@@ -37,7 +37,7 @@
 
 .clock {
     grid-area: clock;
-    min-height: 20em;
+    min-height: 10em;
 }
 
 /* Voice Selection */
