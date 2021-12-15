@@ -30,6 +30,7 @@ type State
     }
 
 data Action
+  = Receive Input
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
@@ -42,6 +43,7 @@ component =
         H.mkEval
           H.defaultEval
             { handleAction = handleAction
+            , receive = Just <<< Receive
             }
     }
 
@@ -64,4 +66,10 @@ render st =
     ]
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
-handleAction _ = pure unit
+handleAction = case _ of
+  Receive input ->
+    H.modify_ \st ->
+      st
+        { classContainer = input.classContainer
+        , time = input.time
+        }
