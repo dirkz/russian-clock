@@ -58,12 +58,21 @@ render st =
         [ SE.circle
             [ SA.cx 50.0
             , SA.cy 50.0
-            , SA.r 40.0
-            , SA.stroke $ SA.Named "black"
+            , SA.r 45.0
+            , SA.stroke color
             , SA.fill $ SA.NoColor
+            ]
+        , SE.line
+            [ SA.x1 50.0
+            , SA.y1 50.0
+            , SA.x2 50.0
+            , SA.y2 10.0
+            , SA.stroke color
             ]
         ]
     ]
+  where
+  color = SA.Named "black"
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
