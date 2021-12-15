@@ -5,6 +5,7 @@ module RussianClock.App.Clock
   ) where
 
 import Prelude
+import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
@@ -65,10 +66,17 @@ render st =
         , SA.x2 50.0
         , SA.y2 10.0
         , SA.stroke color
+        , SA.transform [ SA.Rotate rotation center center ]
         ]
     ]
   where
+  center = 50.0
+
   color = SA.Named "black"
+
+  hour = if st.time.hour == 12 then 0 else st.time.hour
+
+  rotation = - 360.0 / toNumber hour
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
