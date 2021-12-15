@@ -2,37 +2,27 @@ module RussianClock.App.Clock
   ( Input
   , Slot
   , component
-  )
-  where
+  ) where
 
 import Prelude
-
-import DOM.HTML.Indexed.InputType (InputType(..))
-import DOM.HTML.Indexed.StepValue (StepValue(..))
-import Data.Array (filter, (!!))
-import Data.Foldable (traverse_)
-import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Number (fromString)
+import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Web.HTML (window)
-import Web.Speech.TTS as TTS
-import Web.Speech.TTS.Utterance as U
-import Web.Speech.TTS.Voice as V
 import Halogen.Svg.Attributes as SA
 import Halogen.Svg.Elements as SE
-import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
+import RussianClock.Util.TimeStruct (TimeStruct)
 
 type Input
   = { classContainer :: String
     , time :: TimeStruct
     }
 
-type Slot id = forall q o. H.Slot q o id
+type Slot id
+  = forall q o. H.Slot q o id
 
 type State
   = { classContainer :: String
