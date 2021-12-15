@@ -3,13 +3,12 @@
 .container {
     display: grid;
     grid-template-areas:
-        ". title ."
-        "voice-selection voice-selection voice-selection"
-        ". clock ."
-        ". time ."
-        ". error ."
-        ". random-time .";
-    grid-template-columns: 1fr 1fr 1fr;
+        "title"
+        "voice-selection"
+        "clock"
+        "time"
+        "error"
+        "random-time";
     gap: 1em;
     margin: 4em;
 }
