@@ -15,27 +15,33 @@
 
 .title {
     grid-area: title;
+    justify-self: center;
 }
 
 .voice-selection {
     grid-area: voice-selection;
+    justify-self: center;
 }
 
 .time {
     grid-area: time;
+    justify-self: center;
 }
 
 .error {
     grid-area: error;
+    justify-self: center;
     color: red;
 }
 
 .random-time {
     grid-area: random-time;
+    justify-self: center;
 }
 
 .clock {
     grid-area: clock;
+    justify-self: center;
     width: 20em;
 }
 
