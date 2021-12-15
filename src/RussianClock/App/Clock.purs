@@ -88,9 +88,11 @@ render st =
 
   angleOneHour = 360.0 / 12.0
 
+  angleOneMinute = 360.0 / 60.0
+
   rotationHour = angleOneHour * toNumber hour
 
-  rotationMinute = 360.0 / 60.0 * toNumber st.time.minute
+  rotationMinute = angleOneMinute * toNumber st.time.minute
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
