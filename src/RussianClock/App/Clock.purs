@@ -78,7 +78,9 @@ render st =
 
   hour = if st.time.hour == 12 then 0 else st.time.hour
 
-  rotation = -360.0 / toNumber hour
+  angleOneHour = 360.0 / 12.0
+
+  rotation = angleOneHour * toNumber hour
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
