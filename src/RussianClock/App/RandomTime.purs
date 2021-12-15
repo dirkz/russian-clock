@@ -4,7 +4,7 @@ module RussianClock.App.RandomTime
 
 import Prelude
 import Data.Int (round)
-import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
@@ -23,9 +23,6 @@ import Web.Speech.TTS.Utterance (defaultRate)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
-unknown :: String
-unknown = "unknown"
-
 language ∷ String
 language = "ru-RU"
 
@@ -39,7 +36,7 @@ _voiceSelect = Proxy :: Proxy "voiceSelect"
 _clock = Proxy :: Proxy "clock"
 
 type State
-  = { maybeTime :: Maybe TimeStruct
+  = { time :: TimeStruct
     , voices :: Array V.Voice
     , maybeVoice :: Maybe V.Voice
     , maybeError :: Maybe String
@@ -57,7 +54,7 @@ component =
   H.mkComponent
     { initialState:
         \_ ->
-          { maybeTime: Nothing
+          { time: { hour: 12, minute: 0 }
           , voices: []
           , maybeVoice: Nothing
           , maybeError: Nothing
@@ -84,10 +81,10 @@ render st =
         HandleVoiceSelection
     , HH.slot_ _clock 0 CL.component
         { classContainer: "clock"
-        , maybeTime: st.maybeTime
+        , time: st.time
         }
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
-        [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
+        [ HH.text $ timeStructString st.time ]
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
@@ -95,16 +92,11 @@ render st =
         [ HH.button
             [ HE.onClick \_ -> Random ]
             [ HH.text "Random Time" ]
-        , case canRead of
-            false -> HH.text ""
-            true ->
-              HH.button
-                [ HE.onClick \_ -> Read ]
-                [ HH.text "Read" ]
+        , HH.button
+            [ HE.onClick \_ -> Read ]
+            [ HH.text "Read" ]
         ]
     ]
-  where
-  canRead = isJust st.maybeVoice && isJust st.maybeTime
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
@@ -121,27 +113,26 @@ handleAction = case _ of
       time = { hour, minute }
     H.modify_ \st ->
       st
-        { maybeTime = Just time
+        { time = time
         }
     handleAction Read
   Read -> do
     eraseError
     st <- H.get
-    case timeString <$> st.maybeTime of
-      Nothing -> signalError "Nothing to read"
-      Just stringToRead -> do
-        case st.maybeVoice of
-          Nothing -> signalError "Have no voice to read"
-          Just voice -> do
-            utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.rate stringToRead
-            w <- H.liftEffect window
-            maybeTts <- H.liftEffect $ TTS.tts w
-            case maybeTts of
-              Nothing -> signalError "No TTS support while trying to read"
-              Just tts -> do
-                H.liftEffect $ TTS.cancel tts
-                H.liftEffect $ TTS.speak tts utt
-            pure unit
+    let
+      stringToRead = timeString st.time
+    case st.maybeVoice of
+      Nothing -> signalError "Have no voice to read"
+      Just voice -> do
+        utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.rate stringToRead
+        w <- H.liftEffect window
+        maybeTts <- H.liftEffect $ TTS.tts w
+        case maybeTts of
+          Nothing -> signalError "No TTS support while trying to read"
+          Just tts -> do
+            H.liftEffect $ TTS.cancel tts
+            H.liftEffect $ TTS.speak tts utt
+        pure unit
   HandleVoiceSelection output -> case output of
     VS.Voice v -> do
       H.modify_ \st -> st { maybeVoice = Just v }

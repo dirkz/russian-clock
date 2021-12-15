@@ -18,7 +18,7 @@ import RussianClock.Util.TimeStruct (TimeStruct)
 
 type Input
   = { classContainer :: String
-    , maybeTime :: Maybe TimeStruct
+    , time :: TimeStruct
     }
 
 type Slot id
@@ -26,7 +26,7 @@ type Slot id
 
 type State
   = { classContainer :: String
-    , maybeTime :: Maybe TimeStruct
+    , time :: TimeStruct
     }
 
 data Action
