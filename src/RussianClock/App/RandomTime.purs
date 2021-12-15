@@ -12,6 +12,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import RussianClock.App.Clock as CL
 import RussianClock.App.VoiceSelect as VS
 import RussianClock.Util.RussianTime (timeString)
 import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
@@ -29,9 +30,13 @@ language ∷ String
 language = "ru-RU"
 
 type Slots
-  = ( voiceSelect :: VS.Slot Int )
+  = ( voiceSelect :: VS.Slot Int
+    , clock :: CL.Slot Int
+    )
 
 _voiceSelect = Proxy :: Proxy "voiceSelect"
+
+_clock = Proxy :: Proxy "clock"
 
 type State
   = { maybeTime :: Maybe TimeStruct
@@ -77,6 +82,10 @@ render st =
         , classVoiceName: "voice-selection-voice"
         }
         HandleVoiceSelection
+    , HH.slot_ _clock 0 CL.component
+        { classContainer: "clock"
+        , maybeTime: st.maybeTime
+        }
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
         [ HH.text $ fromMaybe unknown $ timeStructString <$> st.maybeTime ]
     , case st.maybeError of
