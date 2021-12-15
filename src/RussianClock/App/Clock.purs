@@ -64,7 +64,7 @@ render st =
         [ SA.x1 center
         , SA.y1 center
         , SA.x2 center
-        , SA.y2 10.0
+        , SA.y2 20.0
         , SA.stroke color
         , SA.transform [ SA.Rotate rotationHour center center ]
         ]
