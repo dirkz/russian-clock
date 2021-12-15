@@ -5,7 +5,7 @@
     grid-template-areas:
         ". title ."
         "voice-selection voice-selection voice-selection"
-        ". clock pitch"
+        "clock clock clock"
         ". time ."
         ". error ."
         ". random-time .";
@@ -40,21 +40,12 @@
     min-height: 20em;
 }
 
-.pitch {
-    grid-area: pitch;
-}
-
-/* Pitch Volume Rate controls */
+/* Voice Selection */
 
 .voice-selection {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 20px;
-}
-
-.voice-selection .voice-selection-error {
-    grid-column: 1 / 4;
-    color: red;
 }
 
 .voice-selection .voice-selection-voice {
