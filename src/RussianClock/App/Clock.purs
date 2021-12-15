@@ -50,33 +50,35 @@ render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   SE.svg
     [ SA.classes [ HH.ClassName st.classContainer ]
-    , SA.viewBox 0.0 0.0 100.0 100.0
+    , SA.viewBox 0.0 0.0 width width
     , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
     ]
     [ SE.circle
-        [ SA.cx 50.0
-        , SA.cy 50.0
+        [ SA.cx center
+        , SA.cy center
         , SA.r 45.0
         , SA.stroke color
         , SA.fill $ SA.NoColor
         ]
     , SE.line
-        [ SA.x1 50.0
-        , SA.y1 50.0
-        , SA.x2 50.0
+        [ SA.x1 center
+        , SA.y1 center
+        , SA.x2 center
         , SA.y2 10.0
         , SA.stroke color
         , SA.transform [ SA.Rotate rotation center center ]
         ]
     ]
   where
-  center = 50.0
+  width = 100.0
+
+  center = width / 2.0
 
   color = SA.Named "black"
 
   hour = if st.time.hour == 12 then 0 else st.time.hour
 
-  rotation = - 360.0 / toNumber hour
+  rotation = -360.0 / toNumber hour
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
