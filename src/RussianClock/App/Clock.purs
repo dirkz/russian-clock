@@ -66,7 +66,7 @@ render st =
         , SA.x2 center
         , SA.y2 10.0
         , SA.stroke color
-        , SA.transform [ SA.Rotate rotation center center ]
+        , SA.transform [ SA.Rotate rotationHour center center ]
         ]
     ]
   where
@@ -80,7 +80,7 @@ render st =
 
   angleOneHour = 360.0 / 12.0
 
-  rotation = angleOneHour * toNumber hour
+  rotationHour = angleOneHour * toNumber hour
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
