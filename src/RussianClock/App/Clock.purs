@@ -10,8 +10,6 @@ import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties as HP
 import Halogen.Svg.Attributes as SA
 import Halogen.Svg.Elements as SE
 import RussianClock.Util.TimeStruct (TimeStruct)
@@ -49,26 +47,24 @@ component =
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
-  HH.article [ HP.classes [ HH.ClassName st.classContainer ] ]
-    [ SE.svg
-        [ SA.classes [ HH.ClassName st.classContainer ]
-        , SA.viewBox 0.0 0.0 100.0 100.0
-        , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
+  SE.svg
+    [ SA.classes [ HH.ClassName st.classContainer ]
+    , SA.viewBox 0.0 0.0 100.0 100.0
+    , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
+    ]
+    [ SE.circle
+        [ SA.cx 50.0
+        , SA.cy 50.0
+        , SA.r 45.0
+        , SA.stroke color
+        , SA.fill $ SA.NoColor
         ]
-        [ SE.circle
-            [ SA.cx 50.0
-            , SA.cy 50.0
-            , SA.r 45.0
-            , SA.stroke color
-            , SA.fill $ SA.NoColor
-            ]
-        , SE.line
-            [ SA.x1 50.0
-            , SA.y1 50.0
-            , SA.x2 50.0
-            , SA.y2 10.0
-            , SA.stroke color
-            ]
+    , SE.line
+        [ SA.x1 50.0
+        , SA.y1 50.0
+        , SA.x2 50.0
+        , SA.y2 10.0
+        , SA.stroke color
         ]
     ]
   where
