@@ -108,7 +108,7 @@ handleAction = case _ of
     let
       hour = 1 + (round $ rh * 11.0)
 
-      minute = round $ rm * 60.0
+      minute = round $ rm * 59.0
 
       time = { hour, minute }
     H.modify_ \st ->
