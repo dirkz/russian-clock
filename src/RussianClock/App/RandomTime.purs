@@ -106,7 +106,7 @@ handleAction = case _ of
     rh <- H.liftEffect random
     rm <- H.liftEffect random
     let
-      hour = round $ rh * 12.0
+      hour = 1 + (round $ rh * 11.0)
 
       minute = round $ rm * 60.0
 
