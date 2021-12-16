@@ -6,7 +6,7 @@ import Prelude
 import RussianClock.Util.TimeStruct (TimeStruct)
 import Data.Int (rem)
 
--- TODO: Wrong for 11:43.
+-- TODO: Wrong for 11:43, 11:56.
 timeString :: TimeStruct -> String
 timeString time
   | time.minute == 30 = "полови́на" <> " " <> (genitiveOrdinalHour $ plusOneHour time.hour)
