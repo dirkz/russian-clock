@@ -3,11 +3,9 @@ module RussianClock.App.VoiceSelect
   , Output(..)
   , Slot
   , component
-  )
-  where
+  ) where
 
 import Prelude
-
 import DOM.HTML.Indexed.InputType (InputType(..))
 import DOM.HTML.Indexed.StepValue (StepValue(..))
 import Data.Array (filter, (!!))
@@ -47,7 +45,8 @@ type Input
     , classContainer :: String
     }
 
-type Slot id = forall q. H.Slot q Output id
+type Slot id
+  = forall q. H.Slot q Output id
 
 type State
   = { voices :: Array V.Voice
@@ -97,7 +96,7 @@ render st =
         [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
             (map voiceOption st.voices)
         ]
-    , HH.p_ [ HH.text "" ] -- placeholder for rate toggle button
+    , HH.p_ [ HH.button [] [ HH.text "Rate" ] ]
     , HH.p_ [ HH.text "Rate" ]
     , HH.p_
         [ HH.input
