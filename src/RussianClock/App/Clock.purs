@@ -1,17 +1,16 @@
 module RussianClock.App.Clock
   ( Input
+  , Output(..)
   , Slot
   , component
   ) where
 
 import Prelude
-
 import Data.Array (filter, range)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
-import Effect.Class.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -24,8 +23,11 @@ type Input
     , time :: TimeStruct
     }
 
+data Output
+  = Clicked
+
 type Slot id
-  = forall q o. H.Slot q o id
+  = forall q. H.Slot q Output id
 
 type State
   = { classContainer :: String
@@ -33,11 +35,11 @@ type State
     }
 
 data Action
-  = Receive Input
-  | Clicked
+  = ActionReceive Input
+  | ActionClicked
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
-component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
+component :: forall q m. MonadEffect m => MonadAff m => H.Component q Input Output m
 component =
   H.mkComponent
     { initialState:
@@ -47,7 +49,7 @@ component =
         H.mkEval
           H.defaultEval
             { handleAction = handleAction
-            , receive = Just <<< Receive
+            , receive = Just <<< ActionReceive
             }
     }
 
@@ -57,7 +59,7 @@ render st =
     [ SA.classes [ HH.ClassName st.classContainer ]
     , SA.viewBox 0.0 0.0 width width
     , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
-    , HE.onClick \_ -> Clicked
+    , HE.onClick \_ -> ActionClicked
     ]
     ( [ SE.circle
           [ SA.cx center
@@ -118,12 +120,12 @@ render st =
 
   minuteCircles = map fiveMinuteMarker allFiveMinutes
 
-handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
+handleAction :: forall cs m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs Output m Unit
 handleAction = case _ of
-  Receive input ->
+  ActionReceive input ->
     H.modify_ \st ->
       st
         { classContainer = input.classContainer
         , time = input.time
         }
-  Clicked -> log "*** clicked"
+  ActionClicked -> H.raise Clicked
