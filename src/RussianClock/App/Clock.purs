@@ -5,7 +5,6 @@ module RussianClock.App.Clock
   ) where
 
 import Prelude
-
 import Data.Array (filter, range)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
@@ -98,9 +97,9 @@ render st =
 
   rotationMinute = anglePerMinute * toNumber st.time.minute
 
-  allMinutes = filter (\n -> n `mod` 5 == 0) $ range 0 59
+  allFiveMinutes = filter (\n -> n `mod` 5 == 0) $ range 0 59
 
-  minuteCircle minute =
+  fiveMinuteCircle minute =
     SE.circle
       [ SA.cx center
       , SA.cy 7.5
@@ -110,7 +109,7 @@ render st =
       , SA.transform [ SA.Rotate (toNumber minute * anglePerMinute) center center ]
       ]
 
-  minuteCircles = map minuteCircle allMinutes
+  minuteCircles = map fiveMinuteCircle allFiveMinutes
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
