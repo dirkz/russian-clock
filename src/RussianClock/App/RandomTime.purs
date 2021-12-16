@@ -37,8 +37,7 @@ _voiceSelect = Proxy :: Proxy "voiceSelect"
 _clock = Proxy :: Proxy "clock"
 
 type VoiceState
-  = { voices :: Array V.Voice
-    , maybeVoice :: Maybe V.Voice
+  = { maybeVoice :: Maybe V.Voice
     , rate :: Number
     }
 
@@ -62,8 +61,7 @@ component =
         \_ ->
           { time: { hour: 12, minute: 0 }
           , voice:
-              { voices: []
-              , maybeVoice: Nothing
+              { maybeVoice: Nothing
               , rate: defaultRate
               }
           , maybeError: Nothing
