@@ -93,7 +93,9 @@ render st =
 
   anglePerMinute = 360.0 / 60.0
 
-  rotationHour = anglePerHour * toNumber hour
+  anglePerMinuteInHour = anglePerHour / 60.0
+
+  rotationHour = anglePerHour * toNumber hour + toNumber st.time.minute * anglePerMinuteInHour
 
   rotationMinute = anglePerMinute * toNumber st.time.minute
 
