@@ -179,7 +179,12 @@ handleAction = case _ of
       H.modify_ \st -> st { voice { rate = rate } }
       handleAction Read
   HandleClock output -> case output of
-    CL.Clicked -> log "*** clock clicked"
+    CL.Clicked -> do
+      st <- H.get
+      case st.gameState of
+        NewRandomTime -> handleAction Solve
+        ShowSolution -> handleAction Read
+        _ -> pure unit
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
