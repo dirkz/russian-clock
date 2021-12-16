@@ -103,7 +103,7 @@ render st =
     SE.circle
       [ SA.cx center
       , SA.cy 5.0
-      , SA.r 5.0
+      , SA.r 1.5
       , SA.stroke color
       , SA.fill $ SA.NoColor
       , SA.transform [ SA.Rotate (toNumber minute * rotationPerMinute) center center ]
