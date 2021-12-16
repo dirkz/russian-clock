@@ -54,30 +54,32 @@ render st =
     , SA.viewBox 0.0 0.0 width width
     , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
     ]
-    [ SE.circle
-        [ SA.cx center
-        , SA.cy center
-        , SA.r 45.0
-        , SA.stroke color
-        , SA.fill $ SA.NoColor
-        ]
-    , SE.line
-        [ SA.x1 center
-        , SA.y1 center
-        , SA.x2 center
-        , SA.y2 20.0
-        , SA.stroke color
-        , SA.transform [ SA.Rotate rotationPerHour center center ]
-        ]
-    , SE.line
-        [ SA.x1 center
-        , SA.y1 center
-        , SA.x2 center
-        , SA.y2 10.0
-        , SA.stroke color
-        , SA.transform [ SA.Rotate rotationPerMinute center center ]
-        ]
-    ]
+    ( [ SE.circle
+          [ SA.cx center
+          , SA.cy center
+          , SA.r 45.0
+          , SA.stroke color
+          , SA.fill $ SA.NoColor
+          ]
+      , SE.line
+          [ SA.x1 center
+          , SA.y1 center
+          , SA.x2 center
+          , SA.y2 20.0
+          , SA.stroke color
+          , SA.transform [ SA.Rotate rotationPerHour center center ]
+          ]
+      , SE.line
+          [ SA.x1 center
+          , SA.y1 center
+          , SA.x2 center
+          , SA.y2 10.0
+          , SA.stroke color
+          , SA.transform [ SA.Rotate rotationPerMinute center center ]
+          ]
+      ]
+        <> minuteCircles
+    )
   where
   width = 100.0
 
