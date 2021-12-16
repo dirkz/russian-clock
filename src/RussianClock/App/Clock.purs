@@ -5,7 +5,8 @@ module RussianClock.App.Clock
   ) where
 
 import Prelude
-import Data.Array (range)
+
+import Data.Array (filter, range)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
@@ -97,7 +98,7 @@ render st =
 
   rotationMinute = anglePerMinute * toNumber st.time.minute
 
-  allMinutes = range 0 59
+  allMinutes = filter (\n -> n `mod` 5 == 0) $ range 0 59
 
   minuteCircle minute =
     SE.circle
