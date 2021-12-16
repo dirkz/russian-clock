@@ -128,25 +128,28 @@ handleAction = case _ of
     H.modify_ \st ->
       st
         { time = time
+        , gameState = NewRandomTime
         }
-    handleAction Read
   Read -> do
     eraseError
     st <- H.get
-    let
-      stringToRead = timeString st.time
-    case st.voice.maybeVoice of
-      Nothing -> signalError "Have no voice to read"
-      Just voice -> do
-        utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.voice.rate stringToRead
-        w <- H.liftEffect window
-        maybeTts <- H.liftEffect $ TTS.tts w
-        case maybeTts of
-          Nothing -> signalError "No TTS support while trying to read"
-          Just tts -> do
-            H.liftEffect $ TTS.cancel tts
-            H.liftEffect $ TTS.speak tts utt
-        pure unit
+    case st.gameState of
+      ShowSolution -> do
+        let
+          stringToRead = timeString st.time
+        case st.voice.maybeVoice of
+          Nothing -> signalError "Have no voice to read"
+          Just voice -> do
+            utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.voice.rate stringToRead
+            w <- H.liftEffect window
+            maybeTts <- H.liftEffect $ TTS.tts w
+            case maybeTts of
+              Nothing -> signalError "No TTS support while trying to read"
+              Just tts -> do
+                H.liftEffect $ TTS.cancel tts
+                H.liftEffect $ TTS.speak tts utt
+            pure unit
+      _ -> pure unit
   HandleVoiceSelection output -> case output of
     VS.Voice v -> do
       H.modify_ \st -> st { voice { maybeVoice = Just v } }
