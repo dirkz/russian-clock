@@ -54,6 +54,7 @@ type State
     , rate :: Number
     , language :: Maybe String
     , classContainer :: String
+    , showRateSelection :: Boolean
     }
 
 data Action
@@ -77,6 +78,7 @@ component =
           , rate: 0.8
           , language: input.language
           , classContainer: input.classContainer
+          , showRateSelection: false
           }
     , render
     , eval:
@@ -90,31 +92,38 @@ component =
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   HH.article [ HP.classes [ HH.ClassName st.classContainer ] ]
-    [ HH.p_
-        [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
-    , HH.p_
-        [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
-            (map voiceOption st.voices)
-        ]
-    , HH.p_ [ HH.button [] [ HH.text "Rate" ] ]
-    , HH.p_ [ HH.text "Rate" ]
-    , HH.p_
-        [ HH.input
-            [ HP.type_ InputRange
-            , HP.min U.rateMin
-            , HP.max U.rateMax
-            , HP.step $ Step 0.1
-            , HP.value (show st.rate)
-            , HE.onValueInput RateInput
-            , HE.onValueChange RateChange
-            ]
-        ]
-    , HH.p_ [ HH.text $ show st.rate ]
-    ]
+    ( [ HH.p_
+          [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
+      , HH.p_
+          [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
+              (map voiceOption st.voices)
+          ]
+      , HH.p_ [ HH.button [] [ HH.text "Rate" ] ]
+      ]
+        <> rateSelection
+    )
   where
   voiceName voice = V.name voice <> " (" <> V.lang voice <> ")"
 
   voiceOption voice = HH.option_ [ HH.text (voiceName voice) ]
+
+  rateSelection = case st.showRateSelection of
+    false -> []
+    true ->
+      [ HH.p_ [ HH.text "Rate" ]
+      , HH.p_
+          [ HH.input
+              [ HP.type_ InputRange
+              , HP.min U.rateMin
+              , HP.max U.rateMax
+              , HP.step $ Step 0.1
+              , HP.value (show st.rate)
+              , HE.onValueInput RateInput
+              , HE.onValueChange RateChange
+              ]
+          ]
+      , HH.p_ [ HH.text $ show st.rate ]
+      ]
 
 handleAction :: forall cs m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs Output m Unit
 handleAction = case _ of
