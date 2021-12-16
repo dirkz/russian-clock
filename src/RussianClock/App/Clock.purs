@@ -67,7 +67,7 @@ render st =
           , SA.x2 center
           , SA.y2 20.0
           , SA.stroke color
-          , SA.transform [ SA.Rotate rotationPerHour center center ]
+          , SA.transform [ SA.Rotate rotationHour center center ]
           ]
       , SE.line
           [ SA.x1 center
@@ -75,7 +75,7 @@ render st =
           , SA.x2 center
           , SA.y2 10.0
           , SA.stroke color
-          , SA.transform [ SA.Rotate rotationPerMinute center center ]
+          , SA.transform [ SA.Rotate rotationMinute center center ]
           ]
       ]
         <> minuteCircles
@@ -89,13 +89,13 @@ render st =
 
   hour = if st.time.hour == 12 then 0 else st.time.hour
 
-  angleOneHour = 360.0 / 12.0
+  anglePerHour = 360.0 / 12.0
 
-  angleOneMinute = 360.0 / 60.0
+  anglePerMinute = 360.0 / 60.0
 
-  rotationPerHour = angleOneHour * toNumber hour
+  rotationHour = anglePerHour * toNumber hour
 
-  rotationPerMinute = angleOneMinute * toNumber st.time.minute
+  rotationMinute = anglePerMinute * toNumber st.time.minute
 
   allMinutes = range 0 59
 
@@ -106,7 +106,7 @@ render st =
       , SA.r 1.5
       , SA.stroke color
       , SA.fill $ SA.NoColor
-      , SA.transform [ SA.Rotate (toNumber minute * rotationPerMinute) center center ]
+      , SA.transform [ SA.Rotate (toNumber minute * anglePerMinute) center center ]
       ]
 
   minuteCircles = map minuteCircle allMinutes
