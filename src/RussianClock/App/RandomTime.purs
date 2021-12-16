@@ -15,7 +15,7 @@ import Halogen.HTML.Properties as HP
 import RussianClock.App.Clock as CL
 import RussianClock.App.VoiceSelect as VS
 import RussianClock.Util.RussianTime (timeString)
-import RussianClock.Util.TimeStruct (TimeStruct, timeStructString)
+import RussianClock.Util.TimeStruct (TimeStruct)
 import Type.Proxy (Proxy(..))
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
