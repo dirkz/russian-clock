@@ -81,7 +81,7 @@ nominativeMinute 20 = "два́дцать"
 
 nominativeMinute 21 = "два́дцать одна́"
 
-nominativeMinute 22 = "два́дцать два"
+nominativeMinute 22 = "два́дцать две"
 
 nominativeMinute 23 = "два́дцать три"
 
