@@ -91,7 +91,6 @@ render st =
     , HH.slot _voiceSelect 0 VS.component
         { language: Just language
         , classContainer: "voice-selection"
-        , classVoiceName: "voice-selection-voice"
         }
         HandleVoiceSelection
     , HH.slot _clock 0 CL.component

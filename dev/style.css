@@ -52,7 +52,3 @@
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 1em;
 }
-
-.voice-selection .voice-selection-voice {
-    grid-column: 1 / 3;
-}

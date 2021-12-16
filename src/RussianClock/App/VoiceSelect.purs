@@ -42,11 +42,9 @@ data Output
 --| * `language`: An optional language (e.g., "ru-RU") if you want only voices for that langugage.
 --| * `classContainer`: The css class name of the container.
 --|   Must be a grid with three columns per row, the elements of which will be paragraphs.
---| * `classVoiceName`: The css class name of the voice name paragraph, which should span two columns.
 type Input
   = { language :: Maybe String
     , classContainer :: String
-    , classVoiceName :: String
     }
 
 type Slot id = forall q. H.Slot q Output id
@@ -57,7 +55,6 @@ type State
     , rate :: Number
     , language :: Maybe String
     , classContainer :: String
-    , classVoiceName :: String
     }
 
 data Action
@@ -81,7 +78,6 @@ component =
           , rate: 0.8
           , language: input.language
           , classContainer: input.classContainer
-          , classVoiceName: input.classVoiceName
           }
     , render
     , eval:
@@ -95,12 +91,13 @@ component =
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   HH.article [ HP.classes [ HH.ClassName st.classContainer ] ]
-    [ HH.p [ HP.classes [ HH.ClassName st.classVoiceName ] ]
+    [ HH.p_
         [ HH.text $ fromMaybe none $ V.name <$> st.maybeVoice ]
     , HH.p_
         [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
             (map voiceOption st.voices)
         ]
+    , HH.p_ [ HH.text "" ] -- placeholder for rate toggle button
     , HH.p_ [ HH.text "Rate" ]
     , HH.p_
         [ HH.input
