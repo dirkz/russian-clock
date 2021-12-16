@@ -46,6 +46,8 @@ data GameState
   | NewRandomTime
   | ShowSolution
 
+derive instance eqGameState :: Eq GameState
+
 type State
   = { time :: TimeStruct
     , voice :: VoiceState
