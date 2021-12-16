@@ -24,7 +24,7 @@ type Input
     }
 
 data Output
-  = Clicked
+  = ClockClicked
 
 type Slot id
   = forall q. H.Slot q Output id
@@ -36,7 +36,7 @@ type State
 
 data Action
   = ActionReceive Input
-  | ActionClicked
+  | ActionClockClicked
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q m. MonadEffect m => MonadAff m => H.Component q Input Output m
@@ -59,7 +59,7 @@ render st =
     [ SA.classes [ HH.ClassName st.classContainer ]
     , SA.viewBox 0.0 0.0 width width
     , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
-    , HE.onClick \_ -> ActionClicked
+    , HE.onClick \_ -> ActionClockClicked
     ]
     ( [ SE.circle
           [ SA.cx center
@@ -128,4 +128,4 @@ handleAction = case _ of
         { classContainer = input.classContainer
         , time = input.time
         }
-  ActionClicked -> H.raise Clicked
+  ActionClockClicked -> H.raise ClockClicked

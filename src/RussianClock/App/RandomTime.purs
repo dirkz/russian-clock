@@ -177,7 +177,7 @@ handleAction = case _ of
       H.modify_ \st -> st { voice { rate = rate } }
       handleAction Read
   HandleClock output -> case output of
-    CL.Clicked -> do
+    CL.ClockClicked -> do
       st <- H.get
       case st.gameState of
         NewRandomTime -> handleAction Solve
