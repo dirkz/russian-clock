@@ -106,7 +106,7 @@ render st =
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
-    , HH.p [ HP.classes [ HH.ClassName "random-time" ] ]
+    , HH.p [ HP.classes [ HH.ClassName "buttons" ] ]
         [ HH.button
             [ HE.onClick \_ -> Random ]
             [ HH.text "Random Time" ]
