@@ -100,12 +100,12 @@ render st =
   allFiveMinutes = filter (\n -> n `mod` 5 == 0) $ range 0 59
 
   fiveMinuteMarker minute =
-    SE.circle
-      [ SA.cx center
-      , SA.cy 7.5
-      , SA.r 1.5
+    SE.line
+      [ SA.x1 center
+      , SA.y1 5.0
+      , SA.x2 center
+      , SA.y2 9.5
       , SA.stroke color
-      , SA.fill $ SA.NoColor
       , SA.transform [ SA.Rotate (toNumber minute * anglePerMinute) center center ]
       ]
 
