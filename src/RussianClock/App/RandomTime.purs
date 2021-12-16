@@ -36,12 +36,16 @@ _voiceSelect = Proxy :: Proxy "voiceSelect"
 
 _clock = Proxy :: Proxy "clock"
 
+type VoiceState
+  = { voices :: Array V.Voice
+    , maybeVoice :: Maybe V.Voice
+    , rate :: Number
+    }
+
 type State
   = { time :: TimeStruct
-    , voices :: Array V.Voice
-    , maybeVoice :: Maybe V.Voice
+    , voice :: VoiceState
     , maybeError :: Maybe String
-    , rate :: Number
     }
 
 data Action
@@ -57,10 +61,12 @@ component =
     { initialState:
         \_ ->
           { time: { hour: 12, minute: 0 }
-          , voices: []
-          , maybeVoice: Nothing
+          , voice:
+              { voices: []
+              , maybeVoice: Nothing
+              , rate: defaultRate
+              }
           , maybeError: Nothing
-          , rate: defaultRate
           }
     , render
     , eval:
@@ -124,10 +130,10 @@ handleAction = case _ of
     st <- H.get
     let
       stringToRead = timeString st.time
-    case st.maybeVoice of
+    case st.voice.maybeVoice of
       Nothing -> signalError "Have no voice to read"
       Just voice -> do
-        utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.rate stringToRead
+        utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.voice.rate stringToRead
         w <- H.liftEffect window
         maybeTts <- H.liftEffect $ TTS.tts w
         case maybeTts of
@@ -138,11 +144,11 @@ handleAction = case _ of
         pure unit
   HandleVoiceSelection output -> case output of
     VS.Voice v -> do
-      H.modify_ \st -> st { maybeVoice = Just v }
+      H.modify_ \st -> st { voice { maybeVoice = Just v } }
       handleAction Read
     VS.Error str -> H.modify_ \st -> st { maybeError = Just str }
     VS.Rate rate -> do
-      H.modify_ \st -> st { rate = rate }
+      H.modify_ \st -> st { voice { rate = rate } }
       handleAction Read
   HandleClock output -> case output of
     CL.Clicked -> log "*** clock clicked"
