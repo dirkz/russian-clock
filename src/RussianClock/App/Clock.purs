@@ -67,7 +67,7 @@ render st =
         , SA.x2 center
         , SA.y2 20.0
         , SA.stroke color
-        , SA.transform [ SA.Rotate rotationHour center center ]
+        , SA.transform [ SA.Rotate rotationPerHour center center ]
         ]
     , SE.line
         [ SA.x1 center
@@ -91,7 +91,7 @@ render st =
 
   angleOneMinute = 360.0 / 60.0
 
-  rotationHour = angleOneHour * toNumber hour
+  rotationPerHour = angleOneHour * toNumber hour
 
   rotationMinute = angleOneMinute * toNumber st.time.minute
 
