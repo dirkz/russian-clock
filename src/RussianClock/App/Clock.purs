@@ -103,7 +103,7 @@ render st =
   minuteCircle minute =
     SE.circle
       [ SA.cx center
-      , SA.cy 5.0
+      , SA.cy 7.5
       , SA.r 1.5
       , SA.stroke color
       , SA.fill $ SA.NoColor
