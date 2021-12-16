@@ -5,13 +5,16 @@ module RussianClock.App.Clock
   ) where
 
 import Prelude
+
 import Data.Array (filter, range)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
+import Effect.Class.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.Svg.Attributes as SA
 import Halogen.Svg.Elements as SE
 import RussianClock.Util.TimeStruct (TimeStruct)
@@ -31,6 +34,7 @@ type State
 
 data Action
   = Receive Input
+  | Clicked
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q o m. MonadEffect m => MonadAff m => H.Component q Input o m
@@ -53,6 +57,7 @@ render st =
     [ SA.classes [ HH.ClassName st.classContainer ]
     , SA.viewBox 0.0 0.0 width width
     , SA.preserveAspectRatio (Just { x_: SA.Mid, y_: SA.Mid }) SA.Meet
+    , HE.onClick \_ -> Clicked
     ]
     ( [ SE.circle
           [ SA.cx center
@@ -121,3 +126,4 @@ handleAction = case _ of
         { classContainer = input.classContainer
         , time = input.time
         }
+  Clicked -> log "*** clicked"
