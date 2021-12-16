@@ -2,45 +2,33 @@
 
 .container {
     display: grid;
-    grid-template-areas:
-        "title"
-        "voice-selection"
-        "clock"
-        "time"
-        "error"
-        "random-time";
+    grid-template-columns: 1fr;
     gap: 1em;
     margin: 1em;
 }
 
 .title {
-    grid-area: title;
     justify-self: center;
 }
 
 .voice-selection {
-    grid-area: voice-selection;
     justify-self: center;
 }
 
 .time {
-    grid-area: time;
     justify-self: center;
 }
 
 .error {
-    grid-area: error;
     justify-self: center;
     color: red;
 }
 
 .random-time {
-    grid-area: random-time;
     justify-self: center;
 }
 
 .clock {
-    grid-area: clock;
     justify-self: center;
     width: 20em;
 }
@@ -51,4 +39,12 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 1em;
+}
+
+.voice-selection p:nth-child(3n) {
+    justify-self: right;
+}
+
+.voice-selection p:nth-child(2n) {
+    justify-self: center;
 }
