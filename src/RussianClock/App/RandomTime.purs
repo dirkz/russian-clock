@@ -100,11 +100,11 @@ render st =
         , time: st.time
         }
         HandleClock
-    , case st.gameState of
-        ShowSolution ->
-          HH.p [ HP.classes [ HH.ClassName "time" ] ]
-            [ HH.text $ timeStructString st.time ]
-        _ -> HH.text ""
+    , HH.p [ HP.classes [ HH.ClassName "time" ] ]
+        [ case st.gameState of
+            ShowSolution -> HH.text $ timeStructString st.time
+            _ -> HH.text "Solve by clicking the clock or the button"
+        ]
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
