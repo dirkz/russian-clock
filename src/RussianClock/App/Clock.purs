@@ -5,6 +5,7 @@ module RussianClock.App.Clock
   ) where
 
 import Prelude
+import Data.Array (range)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
@@ -93,6 +94,20 @@ render st =
   rotationHour = angleOneHour * toNumber hour
 
   rotationMinute = angleOneMinute * toNumber st.time.minute
+
+  allMinutes = range 0 59
+
+  minuteCircle minute =
+    SE.circle
+      [ SA.cx center
+      , SA.cy 5.0
+      , SA.r 5.0
+      , SA.stroke color
+      , SA.fill $ SA.NoColor
+      , SA.transform [ SA.Rotate (toNumber minute * rotationMinute) center center ]
+      ]
+
+  minuteCircles = map minuteCircle allMinutes
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
