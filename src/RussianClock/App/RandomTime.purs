@@ -58,6 +58,7 @@ type State
 data Action
   = Initialize
   | Random
+  | Solve
   | Read
   | HandleVoiceSelection VS.Output
   | HandleClock CL.Output
@@ -99,8 +100,11 @@ render st =
         , time: st.time
         }
         HandleClock
-    , HH.p [ HP.classes [ HH.ClassName "time" ] ]
-        [ HH.text $ timeStructString st.time ]
+    , case st.gameState of
+        ShowSolution ->
+          HH.p [ HP.classes [ HH.ClassName "time" ] ]
+            [ HH.text $ timeStructString st.time ]
+        _ -> HH.text ""
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
@@ -108,6 +112,11 @@ render st =
         [ HH.button
             [ HE.onClick \_ -> Random ]
             [ HH.text "Random Time" ]
+        , HH.button
+            [ HP.enabled canSolve
+            , HE.onClick \_ -> Solve
+            ]
+            [ HH.text "Solve" ]
         , HH.button
             [ HP.enabled canRead
             , HE.onClick \_ -> Read
@@ -117,6 +126,8 @@ render st =
     ]
   where
   canRead = st.gameState == ShowSolution
+
+  canSolve = st.gameState == NewRandomTime
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
@@ -136,6 +147,9 @@ handleAction = case _ of
         { time = time
         , gameState = NewRandomTime
         }
+  Solve -> do
+    H.modify_ \st -> st { gameState = ShowSolution }
+    handleAction Read
   Read -> do
     eraseError
     st <- H.get
