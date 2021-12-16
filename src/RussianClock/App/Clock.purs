@@ -99,7 +99,7 @@ render st =
 
   allFiveMinutes = filter (\n -> n `mod` 5 == 0) $ range 0 59
 
-  fiveMinuteCircle minute =
+  fiveMinuteMarker minute =
     SE.circle
       [ SA.cx center
       , SA.cy 7.5
@@ -109,7 +109,7 @@ render st =
       , SA.transform [ SA.Rotate (toNumber minute * anglePerMinute) center center ]
       ]
 
-  minuteCircles = map fiveMinuteCircle allFiveMinutes
+  minuteCircles = map fiveMinuteMarker allFiveMinutes
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
