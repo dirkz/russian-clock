@@ -41,10 +41,16 @@ type VoiceState
     , rate :: Number
     }
 
+data GameState
+  = NothingYet
+  | NewRandomTime
+  | ShowSolution
+
 type State
   = { time :: TimeStruct
     , voice :: VoiceState
     , maybeError :: Maybe String
+    , gameState :: GameState
     }
 
 data Action
@@ -65,6 +71,7 @@ component =
               , rate: defaultRate
               }
           , maybeError: Nothing
+          , gameState: NothingYet
           }
     , render
     , eval:
