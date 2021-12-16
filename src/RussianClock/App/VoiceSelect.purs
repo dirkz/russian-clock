@@ -66,6 +66,7 @@ data Action
   | RateChange String
   --|Communicate the chosen voice to the parent
   | RaiseVoice
+  | ToggleRateSelection
 
 --|A TTS (text to speech, web speech synthesis) voice selector.
 component :: forall q m. MonadEffect m => MonadAff m => H.Component q Input Output m
@@ -98,7 +99,11 @@ render st =
           [ HH.select [ HE.onSelectedIndexChange SelectVoiceByIndex ]
               (map voiceOption st.voices)
           ]
-      , HH.p_ [ HH.button [] [ HH.text "Rate" ] ]
+      , HH.p_
+          [ HH.button [ HE.onClick \_ -> ToggleRateSelection ]
+              [ HH.text "Rate"
+              ]
+          ]
       ]
         <> rateSelection
     )
@@ -154,6 +159,7 @@ handleAction = case _ of
   RaiseVoice -> do
     st <- H.get
     traverse_ (H.raise <<< Voice) st.maybeVoice
+  ToggleRateSelection -> H.modify_ \st -> st { showRateSelection = not st.showRateSelection }
   where
   signalError string = H.raise $ Error string
 
