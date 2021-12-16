@@ -7,6 +7,7 @@ import Data.Int (round)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
+import Effect.Class.Console (log)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
@@ -48,6 +49,7 @@ data Action
   | Random
   | Read
   | HandleVoiceSelection VS.Output
+  | HandleClock CL.Output
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -79,10 +81,11 @@ render st =
         , classVoiceName: "voice-selection-voice"
         }
         HandleVoiceSelection
-    , HH.slot_ _clock 0 CL.component
+    , HH.slot _clock 0 CL.component
         { classContainer: "clock"
         , time: st.time
         }
+        HandleClock
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
         [ HH.text $ timeStructString st.time ]
     , case st.maybeError of
@@ -141,6 +144,8 @@ handleAction = case _ of
     VS.Rate rate -> do
       H.modify_ \st -> st { rate = rate }
       handleAction Read
+  HandleClock output -> case output of
+    CL.Clicked -> log "*** clock clicked"
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
