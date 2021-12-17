@@ -36,11 +36,11 @@
 /* String left to read */
 
 .already-read {
-    color: black;
+    color: green;
 }
 
 .left-to-read {
-    color: green;
+    color: black;
 }
 
 /* Voice Selection */
