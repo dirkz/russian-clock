@@ -22,7 +22,7 @@ import Type.Proxy (Proxy(..))
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
 import Web.Speech.TTS.SpeechSynthesisEvent (charIndex)
-import Web.Speech.TTS.Utterance (defaultRate, listenToBoundary)
+import Web.Speech.TTS.Utterance (defaultRate, listenToBoundary, listenToEnd)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
@@ -180,6 +180,7 @@ handleAction = case _ of
           Just voice -> do
             utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.voice.rate stringToRead
             _ <- H.subscribe =<< charIndexEmitter utt ReadCharIndex
+            _ <- H.subscribe =<< endOfReadingEmitter utt ReadToTheEnd
             w <- H.liftEffect window
             maybeTts <- H.liftEffect $ TTS.tts w
             case maybeTts of
@@ -226,4 +227,11 @@ handleAction = case _ of
     { emitter, listener } <- H.liftEffect HS.create
     H.liftEffect $ listenToBoundary utt
       $ Just \ev -> HS.notify listener $ constr $ charIndex ev
+    pure emitter
+
+  endOfReadingEmitter :: forall m1 a. Bind m1 => MonadEffect m1 => U.Utterance -> a -> m1 (HS.Emitter a)
+  endOfReadingEmitter utt constr = do
+    { emitter, listener } <- H.liftEffect HS.create
+    H.liftEffect $ listenToEnd utt
+      $ Just \_ -> HS.notify listener $ constr
     pure emitter
