@@ -56,6 +56,8 @@ type State
     , gameState :: GameState
     , indexRead :: Int
     , stringToRead :: String
+    , stringAlreadyRead :: String
+    , stringToReadLeft :: String
     }
 
 data Action
@@ -81,6 +83,8 @@ component =
           , gameState: NothingYet
           , indexRead: 0
           , stringToRead: ""
+          , stringAlreadyRead: ""
+          , stringToReadLeft: ""
           }
     , render
     , eval:
