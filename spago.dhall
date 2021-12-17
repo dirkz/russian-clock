@@ -7,6 +7,7 @@
   , "effect"
   , "foldable-traversable"
   , "halogen"
+  , "halogen-subscriptions"
   , "halogen-svg-elems"
   , "integers"
   , "maybe"
