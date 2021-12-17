@@ -12,6 +12,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Subscription as HS
 import RussianClock.App.Clock as CL
 import RussianClock.App.VoiceSelect as VS
 import RussianClock.Util.RussianTime (timeString)
@@ -187,3 +188,7 @@ handleAction = case _ of
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
   eraseError = H.modify_ \st -> st { maybeError = Nothing }
+
+  utteranceEmitter utt = do
+    { emitter, listener } <- HS.create
+    pure emitter
