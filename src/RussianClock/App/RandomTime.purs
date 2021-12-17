@@ -193,7 +193,7 @@ handleAction = case _ of
 
   eraseError = H.modify_ \st -> st { maybeError = Nothing }
 
-  charIndexEmitter :: forall m a. Bind m => MonadEffect m => U.Utterance -> (Int -> a) -> m (HS.Emitter a)
+  charIndexEmitter :: forall m1 a. Bind m1 => MonadEffect m1 => U.Utterance -> (Int -> a) -> m1 (HS.Emitter a)
   charIndexEmitter utt constr = do
     { emitter, listener } <- H.liftEffect HS.create
     H.liftEffect $ listenToBoundary utt $ Just \ev -> HS.notify listener $ constr $ charIndex ev
