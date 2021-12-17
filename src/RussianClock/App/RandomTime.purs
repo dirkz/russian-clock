@@ -3,6 +3,7 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
+
 import Data.Int (round)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
@@ -20,7 +21,7 @@ import RussianClock.Util.TimeStruct (TimeStruct)
 import Type.Proxy (Proxy(..))
 import Web.HTML (window)
 import Web.Speech.TTS as TTS
-import Web.Speech.TTS.Utterance (defaultRate)
+import Web.Speech.TTS.Utterance (defaultRate, listenToBoundary)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 
@@ -191,4 +192,5 @@ handleAction = case _ of
 
   utteranceEmitter utt = do
     { emitter, listener } <- HS.create
+    listenToBoundary utt $ Just \ev -> HS.notify listener ev
     pure emitter
