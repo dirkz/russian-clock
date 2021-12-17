@@ -55,7 +55,6 @@ type State
     , voice :: VoiceState
     , maybeError :: Maybe String
     , gameState :: GameState
-    , indexRead :: Int
     , stringToRead :: String
     , stringAlreadyRead :: String
     , stringToReadLeft :: String
@@ -82,7 +81,6 @@ component =
               }
           , maybeError: Nothing
           , gameState: NothingYet
-          , indexRead: 0
           , stringToRead: ""
           , stringAlreadyRead: ""
           , stringToReadLeft: ""
@@ -208,8 +206,7 @@ handleAction = case _ of
   ReadCharIndex i ->
     H.modify_ \st ->
       st
-        { indexRead = i
-        , stringAlreadyRead = take i st.stringToRead
+        { stringAlreadyRead = take i st.stringToRead
         , stringToReadLeft = drop i st.stringToRead
         }
   where
