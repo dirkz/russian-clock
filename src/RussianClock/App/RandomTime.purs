@@ -55,6 +55,7 @@ type State
     , voice :: VoiceState
     , maybeError :: Maybe String
     , gameState :: GameState
+    , readIndex :: Int
     }
 
 data Action
@@ -78,6 +79,7 @@ component =
               }
           , maybeError: Nothing
           , gameState: NothingYet
+          , readIndex: 0
           }
     , render
     , eval:
@@ -188,7 +190,7 @@ handleAction = case _ of
         NewRandomTime -> handleAction Solve
         ShowSolution -> handleAction Read
         _ -> pure unit
-  ReadCharIndex i -> log $ "*** char index " <> show i
+  ReadCharIndex i -> H.modify_ \st -> st { readIndex = i }
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
