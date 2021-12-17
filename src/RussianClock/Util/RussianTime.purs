@@ -22,18 +22,18 @@ timeString time
     "без"
       <> " "
       <> genitiveMinute (60 - time.minute)
-      <> theMinute
+      <> theGenitiveMinute
       <> " "
       <> (nominativeHour $ plusOneHour time.hour)
     where
-    theMinute =
+    theGenitiveMinute =
       let
         correctedMinute = if time.minute < 30 then time.minute else 60 - time.minute
       in
         if correctedMinute `rem` 5 == 0 then
           ""
         else
-          " " <> minuteAfterNumber correctedMinute
+          " " <> genitiveMinuteAfterNumber correctedMinute
 
 plusOneHour :: Int -> Int
 plusOneHour h = (h + 1) `mod` 12
@@ -305,3 +305,8 @@ minuteAfterNumber 29 = "мину́т"
 minuteAfterNumber 30 = "мину́т"
 
 minuteAfterNumber m = "minuteAfterNumber: " <> show m <> "?"
+
+genitiveMinuteAfterNumber :: Int -> String
+genitiveMinuteAfterNumber n = case minuteAfterNumber n of
+  "мину́та" -> "мину́ты"
+  min -> min
