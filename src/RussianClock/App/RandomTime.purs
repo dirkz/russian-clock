@@ -5,7 +5,6 @@ module RussianClock.App.RandomTime
 import Prelude
 import Data.Int (round)
 import Data.Maybe (Maybe(..))
-import Effect (Effect)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
