@@ -3,7 +3,6 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
-
 import Data.Int (round)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
@@ -198,5 +197,6 @@ handleAction = case _ of
   charIndexEmitter :: forall m1 a. Bind m1 => MonadEffect m1 => U.Utterance -> (Int -> a) -> m1 (HS.Emitter a)
   charIndexEmitter utt constr = do
     { emitter, listener } <- H.liftEffect HS.create
-    H.liftEffect $ listenToBoundary utt $ Just \ev -> HS.notify listener $ constr $ charIndex ev
+    H.liftEffect $ listenToBoundary utt
+      $ Just \ev -> HS.notify listener $ constr $ charIndex ev
     pure emitter
