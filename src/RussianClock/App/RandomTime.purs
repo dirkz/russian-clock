@@ -163,8 +163,7 @@ handleAction = case _ of
           Nothing -> signalError "Have no voice to read"
           Just voice -> do
             utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.voice.rate stringToRead
-            -- emitter <- charIndexEmitter utt ReadCharIndex
-            -- _ <- H.subscribe emitter
+            _ <- H.subscribe =<< charIndexEmitter utt ReadCharIndex
             w <- H.liftEffect window
             maybeTts <- H.liftEffect $ TTS.tts w
             case maybeTts of
@@ -195,7 +194,7 @@ handleAction = case _ of
 
   eraseError = H.modify_ \st -> st { maybeError = Nothing }
 
-  charIndexEmitter :: forall a. MonadEffect m => U.Utterance -> (Int -> a) -> m (HS.Emitter a)
+  charIndexEmitter :: forall m a. Bind m => MonadEffect m => U.Utterance -> (Int -> a) -> m (HS.Emitter a)
   charIndexEmitter utt constr = do
     { emitter, listener } <- H.liftEffect HS.create
     H.liftEffect $ listenToBoundary utt $ Just \ev -> HS.notify listener $ constr $ charIndex ev
