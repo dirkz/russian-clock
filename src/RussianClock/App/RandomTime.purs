@@ -5,6 +5,7 @@ module RussianClock.App.RandomTime
 import Prelude
 import Data.Int (round)
 import Data.Maybe (Maybe(..))
+import Data.String (drop, take)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
@@ -109,11 +110,14 @@ render st =
         , time: st.time
         }
         HandleClock
-    , HH.p [ HP.classes [ HH.ClassName "time" ] ]
-        [ case st.gameState of
-            ShowSolution -> HH.text st.stringToRead
-            _ -> HH.text "Solve by clicking the clock or the button"
-        ]
+    , HH.p [ HP.classes [ HH.ClassName "time" ] ] case st.gameState of
+        ShowSolution ->
+          [ HH.span [ HP.classes [ HH.ClassName "already-read" ] ]
+              [ HH.text st.stringAlreadyRead ]
+          , HH.span [ HP.classes [ HH.ClassName "left-to-read" ] ]
+              [ HH.text st.stringToReadLeft ]
+          ]
+        _ -> [ HH.text "Solve by clicking the clock or the button" ]
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
@@ -166,7 +170,12 @@ handleAction = case _ of
       ShowSolution -> do
         let
           stringToRead = timeString st.time
-        H.modify_ \sta -> sta { stringToRead = stringToRead }
+        H.modify_ \sta ->
+          sta
+            { stringToRead = stringToRead
+            , stringAlreadyRead = ""
+            , stringToReadLeft = stringToRead
+            }
         case st.voice.maybeVoice of
           Nothing -> signalError "Have no voice to read"
           Just voice -> do
@@ -196,7 +205,13 @@ handleAction = case _ of
         NewRandomTime -> handleAction Solve
         ShowSolution -> handleAction Read
         _ -> pure unit
-  ReadCharIndex i -> H.modify_ \st -> st { indexRead = i }
+  ReadCharIndex i ->
+    H.modify_ \st ->
+      st
+        { indexRead = i
+        , stringAlreadyRead = take i st.stringToRead
+        , stringToReadLeft = drop i st.stringToRead
+        }
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
