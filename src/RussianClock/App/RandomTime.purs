@@ -55,6 +55,7 @@ type State
     , maybeError :: Maybe String
     , gameState :: GameState
     , indexRead :: Int
+    , stringToRead :: String
     }
 
 data Action
@@ -79,6 +80,7 @@ component =
           , maybeError: Nothing
           , gameState: NothingYet
           , indexRead: 0
+          , stringToRead: ""
           }
     , render
     , eval:
@@ -105,7 +107,7 @@ render st =
         HandleClock
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
         [ case st.gameState of
-            ShowSolution -> HH.text $ timeString st.time
+            ShowSolution -> HH.text st.stringToRead
             _ -> HH.text "Solve by clicking the clock or the button"
         ]
     , case st.maybeError of
@@ -160,6 +162,7 @@ handleAction = case _ of
       ShowSolution -> do
         let
           stringToRead = timeString st.time
+        H.modify_ \sta -> sta { stringToRead = stringToRead }
         case st.voice.maybeVoice of
           Nothing -> signalError "Have no voice to read"
           Just voice -> do
