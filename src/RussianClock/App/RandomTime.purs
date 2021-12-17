@@ -3,7 +3,6 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
-
 import Data.Int (round)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
@@ -164,7 +163,8 @@ handleAction = case _ of
           Nothing -> signalError "Have no voice to read"
           Just voice -> do
             utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.voice.rate stringToRead
-            -- _ <- H.subscribe =<< charIndexEmitter utt ReadCharIndex
+            emitter <- charIndexEmitter utt ReadCharIndex
+            _ <- H.subscribe emitter
             w <- H.liftEffect window
             maybeTts <- H.liftEffect $ TTS.tts w
             case maybeTts of
@@ -195,8 +195,8 @@ handleAction = case _ of
 
   eraseError = H.modify_ \st -> st { maybeError = Nothing }
 
-  charIndexEmitter :: forall a. U.Utterance -> (Int -> a) -> Effect (HS.Emitter a)
+  -- charIndexEmitter :: forall a. U.Utterance -> (Int -> a) -> Effect (HS.Emitter a)
   charIndexEmitter utt constr = do
-    { emitter, listener } <- HS.create
+    { emitter, listener } <- H.liftEffect HS.create
     listenToBoundary utt $ Just \ev -> HS.notify listener $ constr $ charIndex ev
     pure emitter
