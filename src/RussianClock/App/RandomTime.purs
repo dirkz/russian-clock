@@ -3,10 +3,12 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
+
 import Data.Int (round)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
+import Effect.Class.Console (log)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
@@ -187,7 +189,7 @@ handleAction = case _ of
         NewRandomTime -> handleAction Solve
         ShowSolution -> handleAction Read
         _ -> pure unit
-  ReadCharIndex _ -> pure unit
+  ReadCharIndex i -> log $ "*** char index " <> show i
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
