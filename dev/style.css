@@ -33,6 +33,16 @@
     width: 20em;
 }
 
+/* String left to read */
+
+.already-read {
+    color: black;
+}
+
+.left-to-read {
+    color: green;
+}
+
 /* Voice Selection */
 
 .voice-selection {
