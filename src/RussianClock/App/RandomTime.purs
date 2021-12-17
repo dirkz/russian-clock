@@ -3,8 +3,10 @@ module RussianClock.App.RandomTime
   ) where
 
 import Prelude
+
 import Data.Int (round)
 import Data.Maybe (Maybe(..))
+import Effect (Effect)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Effect.Random (random)
@@ -193,6 +195,7 @@ handleAction = case _ of
 
   eraseError = H.modify_ \st -> st { maybeError = Nothing }
 
+  charIndexEmitter :: forall a. U.Utterance -> (Int -> a) -> Effect (HS.Emitter a)
   charIndexEmitter utt constr = do
     { emitter, listener } <- HS.create
     listenToBoundary utt $ Just \ev -> HS.notify listener $ constr $ charIndex ev
