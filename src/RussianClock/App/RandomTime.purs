@@ -63,6 +63,7 @@ data Action
   | Read
   | HandleVoiceSelection VS.Output
   | HandleClock CL.Output
+  | ReadCharIndex Int
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -161,6 +162,7 @@ handleAction = case _ of
           Nothing -> signalError "Have no voice to read"
           Just voice -> do
             utt <- H.liftEffect $ U.createWithVoiceAndRate voice st.voice.rate stringToRead
+            -- _ <- H.subscribe =<< charIndexEmitter utt ReadCharIndex
             w <- H.liftEffect window
             maybeTts <- H.liftEffect $ TTS.tts w
             case maybeTts of
@@ -185,6 +187,7 @@ handleAction = case _ of
         NewRandomTime -> handleAction Solve
         ShowSolution -> handleAction Read
         _ -> pure unit
+  ReadCharIndex _ -> pure unit
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
