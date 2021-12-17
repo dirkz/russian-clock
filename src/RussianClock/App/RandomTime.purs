@@ -68,6 +68,7 @@ data Action
   | HandleVoiceSelection VS.Output
   | HandleClock CL.Output
   | ReadCharIndex Int
+  | ReadToTheEnd
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -208,6 +209,12 @@ handleAction = case _ of
       st
         { stringAlreadyRead = take i st.stringToRead
         , stringToReadLeft = drop i st.stringToRead
+        }
+  ReadToTheEnd ->
+    H.modify_ \st ->
+      st
+        { stringAlreadyRead = st.stringToRead
+        , stringToReadLeft = ""
         }
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
