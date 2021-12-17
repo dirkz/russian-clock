@@ -193,7 +193,7 @@ handleAction = case _ of
 
   eraseError = H.modify_ \st -> st { maybeError = Nothing }
 
-  charIndexEmitter utt val = do
+  charIndexEmitter utt constr = do
     { emitter, listener } <- HS.create
-    listenToBoundary utt $ Just \ev -> HS.notify listener $ val $ charIndex ev
+    listenToBoundary utt $ Just \ev -> HS.notify listener $ constr $ charIndex ev
     pure emitter
