@@ -7,7 +7,6 @@ import Data.Int (round)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
-import Effect.Class.Console (log)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
@@ -55,7 +54,7 @@ type State
     , voice :: VoiceState
     , maybeError :: Maybe String
     , gameState :: GameState
-    , readIndex :: Int
+    , indexRead :: Int
     }
 
 data Action
@@ -79,7 +78,7 @@ component =
               }
           , maybeError: Nothing
           , gameState: NothingYet
-          , readIndex: 0
+          , indexRead: 0
           }
     , render
     , eval:
@@ -190,7 +189,7 @@ handleAction = case _ of
         NewRandomTime -> handleAction Solve
         ShowSolution -> handleAction Read
         _ -> pure unit
-  ReadCharIndex i -> H.modify_ \st -> st { readIndex = i }
+  ReadCharIndex i -> H.modify_ \st -> st { indexRead = i }
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
