@@ -250,11 +250,12 @@ handleAction = case _ of
         }
   HandleKeyEvent ev -> do
     case KE.key ev of
-      " " -> solveOrRandom
-      "Enter" -> solveOrRandom
-      "r" -> do
-        H.liftEffect $ E.preventDefault $ KE.toEvent ev
-        tryToRead
+      " " -> when noModifiers solveOrRandom
+      "Enter" -> when noModifiers solveOrRandom
+      "r" ->
+        when noModifiers do
+          H.liftEffect $ E.preventDefault $ KE.toEvent ev
+          tryToRead
       _ -> log "*** unhandled key"
     where
     tryToRead = do
@@ -268,6 +269,19 @@ handleAction = case _ of
         handleAction Solve
       else
         handleAction Random
+
+    noModifiers =
+      KE.ctrlKey ev == false
+        && KE.shiftKey ev
+        == false
+        && KE.altKey ev
+        == false
+        && KE.metaKey ev
+        == false
+        && KE.repeat ev
+        == false
+        && KE.isComposing ev
+        == false
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
