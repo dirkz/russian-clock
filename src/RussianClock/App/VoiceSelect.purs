@@ -43,6 +43,7 @@ data Output
 type Input
   = { language :: Maybe String
     , classContainer :: String
+    , rate :: Number
     }
 
 type Slot id
@@ -76,7 +77,7 @@ component =
         \input ->
           { voices: []
           , maybeVoice: Nothing
-          , rate: U.defaultRate
+          , rate: input.rate
           , language: input.language
           , classContainer: input.classContainer
           , showRateSelection: false

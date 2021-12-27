@@ -110,6 +110,7 @@ render st =
     , HH.slot _voiceSelect 0 VS.component
         { language: Just language
         , classContainer: "voice-selection"
+        , rate: st.voice.rate
         }
         HandleVoiceSelection
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
