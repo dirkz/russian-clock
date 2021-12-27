@@ -1,5 +1,9 @@
 /* General layout */
 
+body {
+    font-size: 20px;
+}
+
 .container {
     display: grid;
     grid-template-columns: 1fr;
@@ -30,7 +34,7 @@
 
 .clock {
     justify-self: center;
-    width: 20em;
+    width: 16em;
 }
 
 /* String left to read */
