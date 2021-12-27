@@ -251,7 +251,7 @@ handleAction = case _ of
         handleAction Solve
       else
         handleAction Random
-    | name == "r" -> do
+    | name == "r" || name == "Enter" -> do
       st <- H.get
       when (canRead st) $ handleAction Read
     | otherwise -> pure unit
