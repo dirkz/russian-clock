@@ -16,6 +16,7 @@
   , "psci-support"
   , "random"
   , "strings"
+  , "web-events"
   , "web-html"
   , "web-speech"
   , "web-uievents"
