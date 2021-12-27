@@ -76,7 +76,7 @@ component =
         \input ->
           { voices: []
           , maybeVoice: Nothing
-          , rate: 0.8
+          , rate: 0.7
           , language: input.language
           , classContainer: input.classContainer
           , showRateSelection: false
