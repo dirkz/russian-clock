@@ -86,7 +86,7 @@ component =
           { time: { hour: 12, minute: 0 }
           , voice:
               { maybeVoice: Nothing
-              , rate: 0.7
+              , rate: 0.8
               }
           , maybeError: Nothing
           , gameState: NothingYet
