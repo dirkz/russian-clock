@@ -133,21 +133,33 @@ render st =
             [ HE.onClick \_ -> Random ]
             [ HH.text "Random Time" ]
         , HH.button
-            [ HP.enabled canSolve
+            [ HP.enabled $ canSolve st
             , HE.onClick \_ -> Solve
             ]
             [ HH.text "Solve" ]
         , HH.button
-            [ HP.enabled canRead
+            [ HP.enabled $ canRead st
             , HE.onClick \_ -> Read
             ]
             [ HH.text "Read" ]
         ]
     ]
-  where
-  canRead = st.gameState == ShowSolution
 
-  canSolve = st.gameState == NewRandomTime
+canRead ::
+  forall r.
+  { gameState :: GameState
+  | r
+  } ->
+  Boolean
+canRead st = st.gameState == ShowSolution
+
+canSolve ::
+  forall r.
+  { gameState :: GameState
+  | r
+  } ->
+  Boolean
+canSolve st = st.gameState == NewRandomTime
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
