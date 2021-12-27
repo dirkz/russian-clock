@@ -246,16 +246,20 @@ handleAction = case _ of
         , stringToReadLeft = ""
         }
   HandleKeyEvent ev -> do
-    H.liftEffect $ E.preventDefault $ KE.toEvent ev
     case KE.key ev of
       " " -> do
+        H.liftEffect $ E.preventDefault $ KE.toEvent ev
         st <- H.get
         if canSolve st then
           handleAction Solve
         else
           handleAction Random
-      "r" -> tryToRead
-      "Enter" -> tryToRead
+      "r" -> do
+        H.liftEffect $ E.preventDefault $ KE.toEvent ev
+        tryToRead
+      "Enter" -> do
+        H.liftEffect $ E.preventDefault $ KE.toEvent ev
+        tryToRead
       _ -> pure unit
     where
     tryToRead = do
