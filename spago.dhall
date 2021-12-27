@@ -18,6 +18,7 @@
   , "strings"
   , "web-html"
   , "web-speech"
+  , "web-uievents"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
