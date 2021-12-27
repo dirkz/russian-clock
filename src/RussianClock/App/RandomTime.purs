@@ -114,7 +114,7 @@ render st =
         }
         HandleVoiceSelection
     , HH.p [ HP.classes [ HH.ClassName "time" ] ]
-        [ HH.text "Try clicking the clock, or keys <Enter>, <Space>, 'r'" ]
+        [ HH.text "Try clicking the clock, or pressing <Enter>, <Space> or 'r'" ]
     , HH.slot _clock 0 CL.component
         { classContainer: "clock"
         , time: st.time
