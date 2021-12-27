@@ -8,6 +8,7 @@ import Data.Maybe (Maybe(..))
 import Data.String (drop, take)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
+import Effect.Class.Console (log)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
@@ -20,6 +21,7 @@ import RussianClock.App.VoiceSelect as VS
 import RussianClock.Util.RussianTime (timeString)
 import RussianClock.Util.TimeStruct (TimeStruct)
 import Type.Proxy (Proxy(..))
+import Web.Event.Event as E
 import Web.HTML (window)
 import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document)
@@ -30,7 +32,6 @@ import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 import Web.UIEvent.KeyboardEvent as KE
 import Web.UIEvent.KeyboardEvent.EventTypes as KET
-import Web.Event.Event as E
 
 language ∷ String
 language = "ru-RU"
@@ -247,24 +248,24 @@ handleAction = case _ of
         }
   HandleKeyEvent ev -> do
     case KE.key ev of
-      " " -> do
-        H.liftEffect $ E.preventDefault $ KE.toEvent ev
-        st <- H.get
-        if canSolve st then
-          handleAction Solve
-        else
-          handleAction Random
+      " " -> solveOrRandom
+      "Enter" -> solveOrRandom
       "r" -> do
         H.liftEffect $ E.preventDefault $ KE.toEvent ev
         tryToRead
-      "Enter" -> do
-        H.liftEffect $ E.preventDefault $ KE.toEvent ev
-        tryToRead
-      _ -> pure unit
+      _ -> log "*** unhandled key"
     where
     tryToRead = do
       st <- H.get
       when (canRead st) $ handleAction Read
+
+    solveOrRandom = do
+      H.liftEffect $ E.preventDefault $ KE.toEvent ev
+      st <- H.get
+      if canSolve st then
+        handleAction Solve
+      else
+        handleAction Random
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
