@@ -248,7 +248,11 @@ handleAction = case _ of
         }
   HandleKey ev
     | KE.key ev == " " -> do
-      log "** space pressed"
+      st <- H.get
+      if canSolve st then
+        handleAction Solve
+      else
+        handleAction Random
     | otherwise -> do
       log "** key pressed"
   where
