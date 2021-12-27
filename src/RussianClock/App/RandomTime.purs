@@ -234,8 +234,11 @@ handleAction = case _ of
         { stringAlreadyRead = st.stringToRead
         , stringToReadLeft = ""
         }
-  HandleKey ev -> do
-    log "** key pressed"
+  HandleKey ev
+    | KE.key ev == " " -> do
+      log "** space pressed"
+    | otherwise -> do
+      log "** key pressed"
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
