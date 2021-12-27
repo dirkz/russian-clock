@@ -8,11 +8,13 @@ import Data.Maybe (Maybe(..))
 import Data.String (drop, take)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
+import Effect.Class.Console (log)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Query.Event (eventListener)
 import Halogen.Subscription as HS
 import RussianClock.App.Clock as CL
 import RussianClock.App.VoiceSelect as VS
@@ -20,11 +22,16 @@ import RussianClock.Util.RussianTime (timeString)
 import RussianClock.Util.TimeStruct (TimeStruct)
 import Type.Proxy (Proxy(..))
 import Web.HTML (window)
+import Web.HTML.HTMLDocument as HTMLDocument
+import Web.HTML.Window (document)
 import Web.Speech.TTS as TTS
 import Web.Speech.TTS.SpeechSynthesisEvent (charIndex)
 import Web.Speech.TTS.Utterance (defaultRate, listenToBoundary, listenToEnd)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
+import Web.UIEvent.KeyboardEvent (KeyboardEvent)
+import Web.UIEvent.KeyboardEvent as KE
+import Web.UIEvent.KeyboardEvent.EventTypes as KET
 
 language ∷ String
 language = "ru-RU"
@@ -69,6 +76,7 @@ data Action
   | HandleClock CL.Output
   | ReadCharIndex Int
   | ReadToTheEnd
+  | HandleKey KeyboardEvent
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -143,7 +151,16 @@ render st =
 
 handleAction :: forall cs o m. MonadEffect m => MonadAff m => Action → H.HalogenM State Action cs o m Unit
 handleAction = case _ of
-  Initialize -> handleAction Random
+  Initialize -> do
+    doc <- H.liftEffect $ document =<< window
+    let
+      emitter =
+        eventListener
+          KET.keydown
+          (HTMLDocument.toEventTarget doc)
+          (map HandleKey <<< KE.fromEvent)
+    _ <- H.subscribe emitter
+    handleAction Random
   Random -> do
     eraseError
     rh <- H.liftEffect random
@@ -217,6 +234,8 @@ handleAction = case _ of
         { stringAlreadyRead = st.stringToRead
         , stringToReadLeft = ""
         }
+  HandleKey ev -> do
+    log "** key pressed"
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
