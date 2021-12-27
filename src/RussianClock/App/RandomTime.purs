@@ -124,7 +124,7 @@ render st =
           , HH.span [ HP.classes [ HH.ClassName "left-to-read" ] ]
               [ HH.text st.stringToReadLeft ]
           ]
-        _ -> [ HH.text "Solve by clicking the clock or the button" ]
+        _ -> [ HH.text "Try clicking the clock, or keys <Enter>, <Space>, 'r'" ]
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
