@@ -8,7 +8,6 @@ import Data.Maybe (Maybe(..))
 import Data.String (drop, take)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
-import Effect.Class.Console (log)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
@@ -263,7 +262,7 @@ handleAction = case _ of
         when noModifiers do
           H.liftEffect $ E.preventDefault $ KE.toEvent ev
           tryToRead
-      _ -> log "*** unhandled key"
+      _ -> pure unit
     where
     tryToRead = do
       st <- H.get
