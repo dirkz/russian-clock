@@ -8,7 +8,6 @@ import Data.Maybe (Maybe(..))
 import Data.String (drop, take)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
-import Effect.Class.Console (log)
 import Effect.Random (random)
 import Halogen as H
 import Halogen.HTML as HH
@@ -256,8 +255,7 @@ handleAction = case _ of
     | KE.key ev == "r" -> do
       st <- H.get
       when (canRead st) $ handleAction Read
-    | otherwise -> do
-      log "** key pressed"
+    | otherwise -> pure unit
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
