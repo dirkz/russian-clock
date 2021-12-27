@@ -150,7 +150,7 @@ render st =
   where
   stringToReadLeft =
     if st.stringToReadLeft /= "" then
-      " > " <> st.stringToReadLeft
+      " >" <> st.stringToReadLeft
     else
       ""
 
