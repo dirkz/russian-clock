@@ -161,7 +161,7 @@ genitiveMinute 29 = "двадцати́ девяти́"
 genitiveMinute m = "genitiveMinute: " <> show m <> "?"
 
 nominativeHour :: Int -> String
-nominativeHour 1 = "оди́н"
+nominativeHour 1 = "час"
 
 nominativeHour 2 = "два"
 
