@@ -27,7 +27,7 @@ import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document)
 import Web.Speech.TTS as TTS
 import Web.Speech.TTS.SpeechSynthesisEvent (charIndex)
-import Web.Speech.TTS.Utterance (defaultRate, listenToBoundary, listenToEnd)
+import Web.Speech.TTS.Utterance (listenToBoundary, listenToEnd)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 import Web.UIEvent.KeyboardEvent as KE
