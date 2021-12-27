@@ -112,6 +112,8 @@ render st =
         , classContainer: "voice-selection"
         }
         HandleVoiceSelection
+    , HH.p [ HP.classes [ HH.ClassName "time" ] ]
+        [ HH.text "Try clicking the clock, or keys <Enter>, <Space>, 'r'" ]
     , HH.slot _clock 0 CL.component
         { classContainer: "clock"
         , time: st.time
@@ -124,7 +126,7 @@ render st =
           , HH.span [ HP.classes [ HH.ClassName "left-to-read" ] ]
               [ HH.text st.stringToReadLeft ]
           ]
-        _ -> [ HH.text "Try clicking the clock, or keys <Enter>, <Space>, 'r'" ]
+        _ -> [ HH.text "" ]
     , case st.maybeError of
         Nothing -> HH.text ""
         Just err -> HH.p [ HP.classes [ HH.ClassName "error" ] ] [ HH.text err ]
