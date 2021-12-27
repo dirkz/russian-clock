@@ -38,7 +38,7 @@ data Action
   = ActionReceive Input
   | ActionClockClicked
 
---|A TTS (text to speech, web speech synthesis) voice selector.
+--|An SVG clock.
 component :: forall q m. MonadEffect m => MonadAff m => H.Component q Input Output m
 component =
   H.mkComponent
