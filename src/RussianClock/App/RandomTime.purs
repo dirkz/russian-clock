@@ -254,10 +254,13 @@ handleAction = case _ of
           handleAction Solve
         else
           handleAction Random
-      "r" -> do
-        st <- H.get
-        when (canRead st) $ handleAction Read
+      "r" -> tryToRead
+      "Enter" -> tryToRead
       _ -> pure unit
+    where
+    tryToRead = do
+      st <- H.get
+      when (canRead st) $ handleAction Read
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
