@@ -125,7 +125,7 @@ render st =
           [ HH.span [ HP.classes [ HH.ClassName "already-read" ] ]
               [ HH.text st.stringAlreadyRead ]
           , HH.span [ HP.classes [ HH.ClassName "left-to-read" ] ]
-              [ HH.text st.stringToReadLeft ]
+              [ HH.text stringToReadLeft ]
           ]
         _ -> [ HH.text "" ]
     , case st.maybeError of
@@ -147,6 +147,12 @@ render st =
             [ HH.text "Read" ]
         ]
     ]
+  where
+  stringToReadLeft =
+    if st.stringToReadLeft /= "" then
+      " > " <> st.stringToReadLeft
+    else
+      ""
 
 canRead ::
   forall r.
