@@ -253,6 +253,9 @@ handleAction = case _ of
         handleAction Solve
       else
         handleAction Random
+    | KE.key ev == "r" -> do
+      st <- H.get
+      when (canRead st) $ handleAction Read
     | otherwise -> do
       log "** key pressed"
   where
