@@ -28,7 +28,6 @@ import Web.Speech.TTS.SpeechSynthesisEvent (charIndex)
 import Web.Speech.TTS.Utterance (defaultRate, listenToBoundary, listenToEnd)
 import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
-import Web.UIEvent.KeyboardEvent (KeyboardEvent)
 import Web.UIEvent.KeyboardEvent as KE
 import Web.UIEvent.KeyboardEvent.EventTypes as KET
 
@@ -75,7 +74,7 @@ data Action
   | HandleClock CL.Output
   | ReadCharIndex Int
   | ReadToTheEnd
-  | HandleKey KeyboardEvent
+  | HandleKeyNamed String
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -169,7 +168,7 @@ handleAction = case _ of
         eventListener
           KET.keydown
           (HTMLDocument.toEventTarget doc)
-          (map HandleKey <<< KE.fromEvent)
+          (map HandleKeyNamed <<< map KE.key <<< KE.fromEvent)
     _ <- H.subscribe emitter
     handleAction Random
   Random -> do
@@ -245,14 +244,14 @@ handleAction = case _ of
         { stringAlreadyRead = st.stringToRead
         , stringToReadLeft = ""
         }
-  HandleKey ev
-    | KE.key ev == " " -> do
+  HandleKeyNamed name
+    | name == " " -> do
       st <- H.get
       if canSolve st then
         handleAction Solve
       else
         handleAction Random
-    | KE.key ev == "r" -> do
+    | name == "r" -> do
       st <- H.get
       when (canRead st) $ handleAction Read
     | otherwise -> pure unit
