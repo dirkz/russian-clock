@@ -30,6 +30,7 @@ import Web.Speech.TTS.Utterance as U
 import Web.Speech.TTS.Voice as V
 import Web.UIEvent.KeyboardEvent as KE
 import Web.UIEvent.KeyboardEvent.EventTypes as KET
+import Web.Event.Event as E
 
 language ∷ String
 language = "ru-RU"
@@ -74,7 +75,7 @@ data Action
   | HandleClock CL.Output
   | ReadCharIndex Int
   | ReadToTheEnd
-  | HandleKeyNamed String
+  | HandleKeyEvent KE.KeyboardEvent
 
 component :: forall q i o m. MonadEffect m => MonadAff m => H.Component q i o m
 component =
@@ -168,7 +169,7 @@ handleAction = case _ of
         eventListener
           KET.keydown
           (HTMLDocument.toEventTarget doc)
-          (map HandleKeyNamed <<< map KE.key <<< KE.fromEvent)
+          (map HandleKeyEvent <<< KE.fromEvent)
     _ <- H.subscribe emitter
     handleAction Random
   Random -> do
@@ -244,17 +245,19 @@ handleAction = case _ of
         { stringAlreadyRead = st.stringToRead
         , stringToReadLeft = ""
         }
-  HandleKeyNamed name
-    | name == " " -> do
-      st <- H.get
-      if canSolve st then
-        handleAction Solve
-      else
-        handleAction Random
-    | name == "r" || name == "Enter" -> do
-      st <- H.get
-      when (canRead st) $ handleAction Read
-    | otherwise -> pure unit
+  HandleKeyEvent ev -> do
+    H.liftEffect $ E.preventDefault $ KE.toEvent ev
+    case KE.key ev of
+      " " -> do
+        st <- H.get
+        if canSolve st then
+          handleAction Solve
+        else
+          handleAction Random
+      "r" -> do
+        st <- H.get
+        when (canRead st) $ handleAction Read
+      _ -> pure unit
   where
   signalError string = H.modify_ \st -> st { maybeError = Just string }
 
