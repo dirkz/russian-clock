@@ -113,10 +113,12 @@ render st =
       [ SA.x1 center
       , SA.y1 5.0
       , SA.x2 center
-      , SA.y2 9.5
+      , SA.y2 y2
       , SA.stroke color
       , SA.transform [ SA.Rotate (toNumber minute * anglePerMinute) center center ]
       ]
+    where
+    y2 = if minute `mod` 15 == 0 then 10.5 else 9.0
 
   minuteCircles = map fiveMinuteMarker allFiveMinutes
 
